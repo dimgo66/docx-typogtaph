@@ -17,6 +17,9 @@ from datetime import datetime
 from flask import Flask, request, render_template, send_from_directory, redirect, url_for, flash, jsonify
 from werkzeug.utils import secure_filename
 import shutil
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 ALLOWED_EXTENSIONS = {'doc', 'docx'}
 # Используем директории внутри webapp для удобства
@@ -53,11 +56,10 @@ def save_file_registry(registry):
         json.dump(registry, f, indent=2, ensure_ascii=False)
 
 def update_file_status(filename, status, result_filename=None, error_message=None):
-    """Обновляет статус файла в реестре."""
+    logging.info(f"update_file_status: {filename} -> {status}")
     registry = load_file_registry()
     if filename not in registry:
         registry[filename] = {}
-    
     registry[filename]['status'] = status
     registry[filename]['updated_at'] = datetime.now().isoformat()
     if result_filename:
@@ -77,23 +79,29 @@ def process_file_worker():
     while True:
         try:
             original_filename, upload_path = processing_queue.get(timeout=1)
+            logging.info(f"Взята задача из очереди: {original_filename}")
             update_file_status(original_filename, "обрабатывается")
 
             # Копируем файл в textinput для пайплайна
             textinput_path = os.path.join(TEXTINPUT_DIR, original_filename)
+            logging.info(f"Копируем файл в textinput: {textinput_path}")
             shutil.copy2(upload_path, textinput_path)
 
             # Запускаем orchestrator.py через subprocess (теперь как модуль)
             try:
+                logging.info(f"Запуск пайплайна для: {original_filename}")
                 result = subprocess.run([
                     'python3', '-m', 'src.pipeline.orchestrator', original_filename
                 ], check=True, capture_output=True, text=True, cwd=PROJECT_ROOT)
+                logging.info(f"Пайплайн завершён для: {original_filename}")
             except subprocess.CalledProcessError as e:
                 error_output = e.stderr or e.stdout or "Неизвестная ошибка при обработке."
+                logging.error(f"Ошибка пайплайна: {error_output.strip()}")
                 update_file_status(original_filename, "ошибка", error_message=error_output.strip())
                 processing_queue.task_done()
                 continue
             except Exception as e:
+                logging.error(f"Исключение при запуске пайплайна: {e}")
                 update_file_status(original_filename, "ошибка", error_message=str(e))
                 processing_queue.task_done()
                 continue
@@ -104,15 +112,17 @@ def process_file_worker():
             result_docx_name = docx_basename  # теперь имя совпадает с output
             result_docx_path = os.path.join(app.config['RESULT_FOLDER'], result_docx_name)
             if os.path.exists(docx_path):
+                logging.info(f"Результат найден: {docx_path}")
                 shutil.copy2(docx_path, result_docx_path)
                 update_file_status(original_filename, "готов", result_filename=result_docx_name)
             else:
+                logging.error(f"DOCX-файл не найден: {docx_path}")
                 update_file_status(original_filename, "ошибка", error_message="DOCX-файл не найден после обработки пайплайном.")
             processing_queue.task_done()
         except queue.Empty:
             time.sleep(1)
         except Exception as e:
-            print(f"Ошибка в воркере: {e}")
+            logging.error(f"Ошибка в воркере: {e}")
             time.sleep(5)
 
 # Запуск потока-воркера
