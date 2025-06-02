@@ -1,0 +1,2 @@
+2025-05-27 03:49:28,896 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:36f49a3c-5069-445b-b760-162d314ccfb4 - Начало конвертации DOCX в HTML: workspace/input/Проза БЭНД Марина Хорт.docx
+2025-05-27 03:49:29,183 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:36f49a3c-5069-445b-b760-162d314ccfb4 - Файл успешно сконвертирован в HTML: workspace/processing/36f49a3c-5069-445b-b760-162d314ccfb4/stage1.html

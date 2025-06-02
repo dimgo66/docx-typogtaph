@@ -1,0 +1,2 @@
+2025-05-27 04:25:28,825 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:c73f95c5-1df6-4b6f-a510-62535c1e84e9 - Начало конвертации DOCX в HTML: workspace/input/ЗОИЛ Татьяна Соловьева Обзор_июнь_2025_Нищета,_золото_и_жизнь_наоборот.docx
+2025-05-27 04:25:28,952 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:c73f95c5-1df6-4b6f-a510-62535c1e84e9 - Файл успешно сконвертирован в HTML: workspace/output/zoil_stage1.html

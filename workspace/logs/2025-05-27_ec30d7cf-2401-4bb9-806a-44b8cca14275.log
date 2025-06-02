@@ -1,0 +1,11 @@
+2025-05-27 01:10:29,009 - orchestrator - INFO - CORR_ID:ec30d7cf-2401-4bb9-806a-44b8cca14275 - Начало нового сеанса обработки конвейера. Correlation ID: ec30d7cf-2401-4bb9-806a-44b8cca14275
+2025-05-27 01:10:29,009 - orchestrator - INFO - CORR_ID:ec30d7cf-2401-4bb9-806a-44b8cca14275 - Входной файл: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 01:10:29,009 - orchestrator - INFO - CORR_ID:ec30d7cf-2401-4bb9-806a-44b8cca14275 - Запуск этапа: DocxToHtmlConversion
+2025-05-27 01:10:29,010 - orchestrator - ERROR - CORR_ID:ec30d7cf-2401-4bb9-806a-44b8cca14275 - Непредвиденная системная ошибка на этапе DocxToHtmlConversion: setup_logging() got an unexpected keyword argument 'pipeline_stage'
+Traceback (most recent call last):
+  File "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/src/pipeline/orchestrator.py", line 73, in run_pipeline
+    output_from_stage1 = convert_docx_to_html(current_input_path, stage1_output_html_temp, stage1_processing_dir, correlation_id)
+  File "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/src/pipeline/docx_to_html_converter.py", line 18, in convert_docx_to_html
+    logger = setup_logging(logger_name=__name__, correlation_id=correlation_id, pipeline_stage=PIPELINE_STAGE_NAME) # Исправляем на setup_logging и передаем аргументы правильно
+TypeError: setup_logging() got an unexpected keyword argument 'pipeline_stage'
+2025-05-27 01:10:29,011 - orchestrator - ERROR - CORR_ID:ec30d7cf-2401-4bb9-806a-44b8cca14275 - Остановка конвейера после системной ошибки на этапе: DocxToHtmlConversion

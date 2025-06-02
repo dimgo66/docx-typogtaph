@@ -1,0 +1,42 @@
+/**
+ * @file: prince_doc_test.css
+ * @description: Радикально новый CSS, основанный на минимальных примерах из документации PrinceXML для отладки колонтитулов.
+ * @dependencies: None
+ * @created: YYYY-MM-DD
+ */
+
+@page {
+    size: 148mm 210mm; /* A5 */
+    margin: 20mm 15mm;
+
+    @top-left {
+        content: string(chaptertitle); /* Политика по умолчанию 'first' */
+        border-bottom: 1px solid green; /* Зеленая рамка для четкой идентификации */
+        padding-bottom: 5mm;
+        vertical-align: bottom;
+        font-family: 'PT Sans', sans-serif;
+        font-size: 9pt;
+        color: black; /* Явный цвет текста */
+    }
+
+    /* Убедимся, что другие области колонтитулов пусты */
+    @top-center { content: none; }
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-center { content: none; }
+    @bottom-right { content: none; }
+}
+
+h2 {
+    string-set: chaptertitle "НОВЫЙ CSS ТЕСТ"; /* Фиксированная строка для теста */
+    /* Свойства типа -prince-string-set также валидны, но string-set короче */
+    /* prince-page-group: start; -- пока не используем для максимального упрощения */
+}
+
+body {
+    font-family: 'PT Serif', serif;
+    font-size: 10.5pt;
+    line-height: 1.4;
+    text-align: justify;
+    hyphens: auto;
+} 

@@ -1,0 +1,2 @@
+2025-05-27 03:49:18,842 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:c3ffd8c4-344c-452d-819b-de02c9ca2f48 - Начало конвертации DOCX в HTML: workspace/input/Проза БЭНД Александра Кулагина.docx
+2025-05-27 03:49:19,176 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:c3ffd8c4-344c-452d-819b-de02c9ca2f48 - Файл успешно сконвертирован в HTML: workspace/processing/c3ffd8c4-344c-452d-819b-de02c9ca2f48/stage1.html

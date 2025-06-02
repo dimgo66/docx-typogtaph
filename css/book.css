@@ -1,0 +1,193 @@
+@page {
+    size: 148mm 210mm; /* A5 size */
+    margin: 20mm 15mm; /* Top, right, bottom, left margins */
+}
+
+body {
+    font-family: 'PT Serif', serif;
+    font-size: 10.5pt;
+    line-height: 1.4;
+    text-align: justify;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    color: #1a1a1a;
+    background: white;
+    max-width: 148mm;
+    margin: 0 auto;
+    padding: 0 15mm;
+}
+
+/* Book container */
+.book {
+    max-width: 118mm; /* 148mm - 30mm margins */
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+    font-family: 'PT Sans', sans-serif;
+    font-weight: 700;
+    hyphens: none;
+    page-break-after: avoid;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: 18pt;
+    text-align: center;
+    margin-top: 2em;
+}
+
+h2 {
+    font-size: 14pt;
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+h3 {
+    font-size: 12pt;
+    margin-top: 1.2em;
+}
+
+p {
+    margin-bottom: 0.5em;
+    text-indent: 1.5em;
+}
+
+/* Title page */
+.title-page {
+    height: 200mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+    page-break-after: always;
+}
+
+.title-page h1 {
+    font-size: 18pt;
+    margin-bottom: 1em;
+}
+
+.title-page .author {
+    font-size: 14pt;
+    margin-bottom: 2em;
+}
+
+.title-page .pub-info {
+    font-size: 11pt;
+    margin-top: 5em;
+}
+
+/* Copyright page */
+.copyright-page {
+    height: 200mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
+}
+
+.copyright-page p {
+    text-indent: 0;
+    font-size: 9pt;
+}
+
+/* Contents */
+.contents {
+    page-break-after: always;
+}
+
+.contents h2 {
+    margin-bottom: 1.5em;
+}
+
+.toc-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+    text-indent: 0;
+}
+
+.toc-dots {
+    flex-grow: 1;
+    margin: 0 0.5em;
+    border-bottom: 1px dotted #999;
+    position: relative;
+    top: -0.5em;
+}
+
+/* Chapter pages */
+.chapter {
+    page-break-before: always;
+}
+
+.chapter-title {
+    text-align: center;
+    margin-bottom: 2em;
+    font-size: 14pt;
+}
+
+/* Quotes and special text */
+blockquote {
+    margin: 1em 2em;
+    padding-left: 1em;
+    border-left: 3px solid #ccc;
+    font-style: italic;
+    text-indent: 0;
+}
+
+.informant-quote {
+    font-style: italic;
+    margin: 1em 0;
+    padding-left: 2em;
+    text-indent: 0;
+}
+
+.folktext {
+    margin: 1em 3em;
+    white-space: pre-line;
+    text-indent: 0;
+}
+
+/* Headers and footers */
+.header {
+    position: running(header);
+    text-align: center;
+    font-size: 9pt;
+    font-style: italic;
+}
+
+.footer {
+    position: running(footer);
+    text-align: center;
+    font-size: 9pt;
+}
+
+@page {
+    @top-center { content: element(header); }
+    @bottom-center { content: counter(page); }
+}
+
+.page-break {
+    page-break-before: always;
+}
+
+/* First letter styling */
+.drop-cap:first-letter {
+    float: left;
+    font-size: 3em;
+    line-height: 0.8;
+    margin-right: 0.1em;
+    padding-top: 0.1em;
+}
+
+/* Special styles for poetry, songs */
+.poetry {
+    white-space: pre-line;
+    margin: 1em 2em;
+    text-indent: 0;
+} 

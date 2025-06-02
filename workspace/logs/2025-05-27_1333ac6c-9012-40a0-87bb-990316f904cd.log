@@ -1,0 +1,2 @@
+2025-05-27 04:12:38,214 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:1333ac6c-9012-40a0-87bb-990316f904cd - Начало конвертации DOCX в HTML: workspace/input/Лицом к лицу Денис Лукьянов Даша Благова_интервью_юность (1).docx
+2025-05-27 04:12:38,376 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:1333ac6c-9012-40a0-87bb-990316f904cd - Файл успешно сконвертирован в HTML: workspace/output/interview_stage1.html

@@ -1,0 +1,259 @@
+@page {
+    size: 148mm 210mm; /* A5 размер */
+    margin: 15mm 12mm 15mm 18mm; /* верх правый низ левый */
+}
+body {
+    font-family: 'Literata', serif;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    max-width: 148mm;
+    background-color: #fff;
+    color: #000;
+    hanging-punctuation: first last;
+}
+.page {
+    width: 148mm;
+    height: 210mm;
+    background-color: white;
+    margin: 16px auto;
+    padding: 14mm 11mm 14mm 17mm;
+    box-sizing: border-box;
+    position: relative;
+    page-break-after: always;
+    box-shadow: 0 0 8px rgba(0,0,0,0.18);
+}
+.page-number {
+    position: absolute;
+    bottom: 7mm;
+    font-size: 10pt;
+}
+.page-even .page-number {
+    left: 18mm;
+}
+.page-odd .page-number {
+    right: 12mm;
+}
+.header {
+    position: absolute;
+    top: 7mm;
+    left: 18mm;
+    right: 12mm;
+    font-size: 9pt;
+    font-style: italic;
+}
+.page-even .header {
+    text-align: left;
+}
+.page-odd .header {
+    text-align: right;
+}
+h1, h2, h3 {
+    font-family: 'Montserrat', Arial, sans-serif;
+    letter-spacing: 0.02em;
+    color: #1a1a1a;
+}
+h1 {
+    font-size: 18pt;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 13mm;
+}
+h2 {
+    font-size: 15pt;
+    margin-top: 8mm;
+    margin-bottom: 4mm;
+}
+h3 {
+    font-size: 13pt;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+}
+p {
+    font-family: 'Literata', serif;
+    text-indent: 1.25em;
+    margin: 0;
+    text-align: justify;
+    hyphens: auto;
+    word-break: break-word;
+}
+p:has(.dropcap) {
+    text-indent: 0;
+}
+.dropcap {
+    float: left;
+    font-size: 300%;
+    line-height: 0.85em;
+    margin-right: 0.1em;
+    margin-top: 0.12em;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: bold;
+    color: #000;
+}
+.quote {
+    font-family: 'Roboto Slab', serif;
+    margin: 1.2em 2.5em;
+    font-style: italic;
+    font-size: 9pt;
+    color: #444;
+    border-left: 2px solid #6a6a6a;
+    padding-left: 1em;
+}
+.informant {
+    text-align: right;
+    font-size: 8pt;
+    font-style: normal;
+    margin-top: 0.5em;
+    color: #6a6a6a;
+}
+.title-page {
+    text-align: center;
+}
+.title-page .university {
+    font-size: 8pt;
+    margin-bottom: 2cm;
+}
+.title-page .author {
+    font-size: 12pt;
+    margin-bottom: 1cm;
+}
+.title-page .title {
+    font-size: 16pt;
+    font-weight: bold;
+    margin-bottom: 0.8cm;
+    line-height: 1.4;
+}
+.title-page .subtitle {
+    font-size: 11pt;
+    margin-bottom: 1.5cm;
+    line-height: 1.3;
+}
+.title-page .year {
+    font-size: 11pt;
+    position: absolute;
+    bottom: 3cm;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+.copyright-page {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    font-size: 9pt;
+    box-sizing: border-box;
+}
+.ct-block, .ct-top, .ct-bottom, .ct-meta, .ct-free, .ct-biblio, .ct-annotation {
+    border: none !important;
+    margin-bottom: 0.5em;
+    padding: 0.7em 1em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+}
+.ct-biblio, .ct-annotation {
+    flex-direction: column;
+    align-items: flex-start;
+}
+.ct-col {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+}
+.ct-col-udkbbk {
+    text-align: left;
+    font-size: 8.5pt;
+    line-height: 1.3;
+}
+.ct-col-age {
+    text-align: left;
+    font-size: 10pt;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.ct-age {
+    border: 1px solid #000;
+    border-radius: 4px;
+    padding: 0.1em 0.5em;
+    font-size: 10pt;
+    display: inline-block;
+}
+.ct-col-copyright {
+    text-align: right;
+    font-size: 8pt;
+    line-height: 1.3;
+}
+.ct-meta {
+    justify-content: center;
+}
+.ct-meta-text {
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+}
+.ct-free {
+    justify-content: center;
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+}
+.ct-biblio-text {
+    font-weight: normal;
+    margin-bottom: 0.3em;
+}
+.ct-biblio-isbn {
+    font-size: 8.5pt;
+    margin-left: 0.5em;
+}
+.ct-annotation {
+    font-size: 9pt;
+    text-align: justify;
+    padding: 1em 0 0 0;
+    margin-bottom: 0.5em;
+    hyphens: auto;
+}
+.ct-col-empty {
+    flex: 1 1 0;
+}
+.toc-page h2 {
+    text-align: center;
+}
+.toc-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+}
+.toc-item .dots {
+    flex-grow: 1;
+    margin: 0 0.5em;
+    border-bottom: 1px dotted #000;
+}
+.chapter-page h2 {
+    text-align: center;
+}
+.header + h1,
+.header + h2,
+.header + h3 {
+    display: none;
+}
+
+@page chapter {
+    @top-left { content: none; }
+    @top-right { content: none; }
+}
+
+.chapter, h1, h2, h3 {
+    page-break-before: always;
+    break-before: page;
+    /* Для совместимости с разными движками */
+}
+
+.chapter {
+    page: chapter;
+} 

@@ -1,0 +1,10 @@
+2025-05-27 01:41:03,869 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Начало нового сеанса обработки конвейера. Correlation ID: c2d06a2f-2201-4549-b33c-23a4d91cc7e2
+2025-05-27 01:41:03,869 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Входной файл: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 01:41:03,869 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Запуск этапа: DocxToHtmlConversion
+2025-05-27 01:41:03,869 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Начало конвертации DOCX в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 01:41:04,263 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Файл успешно сконвертирован в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/c2d06a2f-2201-4549-b33c-23a4d91cc7e2/DocxToHtmlConversion/output_temp.html
+2025-05-27 01:41:04,264 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Этап DocxToHtmlConversion успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/c2d06a2f-2201-4549-b33c-23a4d91cc7e2/DocxToHtmlConversion/output_temp.html
+2025-05-27 01:41:04,264 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Запуск этапа: TypografProcessorModule
+2025-05-27 01:41:05,605 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Этап TypografProcessorModule успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/c2d06a2f-2201-4549-b33c-23a4d91cc7e2/TypografProcessorModule/output_temp_typograf.html
+2025-05-27 01:41:05,605 - orchestrator - INFO - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Запуск этапа: LanguageToolProcessorModule
+2025-05-27 01:51:05,607 - orchestrator - ERROR - CORR_ID:c2d06a2f-2201-4549-b33c-23a4d91cc7e2 - Этап LanguageToolProcessorModule завершился ошибкой. Выходной файл отчета не создан или не найден: None

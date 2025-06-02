@@ -1,0 +1,75 @@
+@page {
+    size: A5;
+    margin-top: 20mm;
+    margin-bottom: 20mm;
+    margin-left: 25mm;
+    margin-right: 15mm;
+    @top-left {
+        content: string(chapter-title, first) "";
+        font-family: 'PT Serif', serif;
+        font-size: 9pt;
+    }
+    @top-right {
+        content: "Пискулин";
+        font-family: 'PT Serif', serif;
+        font-size: 9pt;
+    }
+    @bottom-center {
+        content: counter(page);
+        font-family: 'PT Serif', serif;
+        font-size: 9pt;
+    }
+}
+
+h2.chapter-title {
+    string-set: chapter-title content();
+}
+
+body {
+    font-family: 'PT Serif', serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #1a1a1a;
+    background: white;
+}
+
+.book {
+    max-width: 118mm;
+    margin: 0 auto;
+}
+
+p {
+    text-indent: 5mm;
+    margin-bottom: 0.5em;
+    text-align: justify;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'PT Serif', serif;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: 18pt;
+}
+
+h2 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 12pt;
+}
+
+h3 {
+    font-size: 12pt;
+    font-style: italic;
+    margin-top: 8pt;
+    margin-bottom: 8pt;
+}
+
+/* Без отступа у первого абзаца после заголовка */
+h1 + p, h2 + p, h3 + p, h4 + p {
+    text-indent: 0;
+} 

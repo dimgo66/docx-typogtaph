@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": ".cursor",
+			"path": ".."
+		},
+		{
+			"name": "print-book",
+			"path": "../../../Cursor/print-book"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "print-book"
+	}
+}

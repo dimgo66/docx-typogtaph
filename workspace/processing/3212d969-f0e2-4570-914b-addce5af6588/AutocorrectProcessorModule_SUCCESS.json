@@ -1,0 +1,9 @@
+{
+    "module": "src.pipeline.autocorrect_processor_module",
+    "correlation_id": "3212d969-f0e2-4570-914b-addce5af6588",
+    "input_file": "workspace/output/Былое и думы Борис Минаев Поколение Юры.html",
+    "output_file": "workspace/processing/3212d969-f0e2-4570-914b-addce5af6588/Былое и думы Борис Минаев Поколение Юры_autocorrected.html",
+    "status": "success",
+    "approved": 0,
+    "rejected": 4
+}

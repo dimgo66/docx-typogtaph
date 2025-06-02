@@ -1,0 +1,11 @@
+{
+    "module": "src.pipeline.docx_to_html_converter",
+    "pipeline_stage": "DocxToHtmlConversion",
+    "correlation_id": "1333ac6c-9012-40a0-87bb-990316f904cd",
+    "input_file": "workspace/input/Лицом к лицу Денис Лукьянов Даша Благова_интервью_юность (1).docx",
+    "output_file": "workspace/output/interview_stage1.html",
+    "status": "success",
+    "timestamp_start": "2025-05-27T01:12:38.214463+00:00",
+    "error_details": null,
+    "timestamp_end": "2025-05-27T01:12:38.376654+00:00"
+}

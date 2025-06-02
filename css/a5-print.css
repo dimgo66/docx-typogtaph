@@ -1,0 +1,61 @@
+/**
+ * @file: a5-print.css
+ * @description: Стили для печати книги в формате А5 с использованием PrinceXML. Фокус на колонтитулах.
+ * @dependencies: HTML-документ с семантической разметкой (h2 для названий глав).
+ * @created: 2024-07-06
+ */
+
+@page { /* Общие правила для всех страниц */
+    size: A5;
+    margin: 20mm; /* Единые поля для начала */
+}
+
+@page :left { /* Правила только для левых (четных) страниц */
+    @top-left {
+        content: string(chapter-title); /* <-- Выводим название главы */
+        padding: 3mm;
+        font-size: 9pt; /* Можно немного увеличить для заголовка */
+        font-family: "PT Sans", sans-serif; /* Пример шрифта для заголовка */
+        vertical-align: bottom;
+        text-align: left;
+    }
+
+    @bottom-left {
+        content: counter(page);
+        font-family: "PT Sans", sans-serif; /* Пример шрифта */
+        font-size: 8pt;
+        color: #333;
+        padding-top: 3mm;
+        vertical-align: top;
+        text-align: left;
+    }
+}
+
+@page :right { /* Правила только для правых (нечетных) страниц */
+    @top-right {
+        content: string(chapter-title); /* <-- Выводим название главы */
+        padding: 3mm;
+        font-size: 9pt; /* Можно немного увеличить для заголовка */
+        font-family: "PT Sans", sans-serif; /* Пример шрифта для заголовка */
+        vertical-align: bottom;
+        text-align: right;
+    }
+
+    @bottom-right {
+        content: counter(page);
+        font-family: "PT Sans", sans-serif; /* Пример шрифта */
+        font-size: 8pt;
+        color: #333;
+        padding-top: 3mm;
+        vertical-align: top;
+        text-align: right;
+    }
+}
+
+/* Стили для элементов HTML */
+h2 {
+    -prince-string-set: chapter-title content(text);
+    /* Пока другие стили для h2 не добавляем, чтобы не запутать тест */
+}
+
+/* Остальные стили пока полностью удалены для чистоты эксперимента */ 

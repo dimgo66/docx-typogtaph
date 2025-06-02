@@ -1,0 +1,90 @@
+% template.tex — шаблон LaTeX для типографского PDF (A5)
+% Поддержка Pandoc, XeLaTeX/LuaLaTeX, PT Serif, стилизация по ТЗ
+
+\documentclass[11pt,a5paper,oneside]{book}
+
+% --- Пакеты ---
+\usepackage{fontspec}         % Для PT Serif
+\usepackage{polyglossia}      % Русский язык
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\setmainfont{PT Serif}
+\setsansfont{Arial}
+\newfontfamily\ptserifbold{PT Serif Bold}
+\newfontfamily\ptserifitalic{PT Serif Italic}
+\newfontfamily\cyrillicfont{PT Serif}
+\newfontfamily\cyrillicfontsf{Arial}
+
+\usepackage[a5paper,top=20mm,bottom=20mm,inner=25mm,outer=15mm]{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{etoolbox}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{indentfirst}
+
+% --- Межстрочный интервал ---
+\linespread{1.4}
+
+% --- Абзацный отступ ---
+\setlength{\parindent}{5mm}
+
+% --- Выравнивание по ширине ---
+\justifying
+
+% --- Колонтитулы ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark} % Название главы
+\fancyhead[R]{Пискулин}   % Фамилия автора
+\fancyfoot[C]{\thepage}   % Номер страницы по центру
+
+% --- Оглавление ---
+\renewcommand{\cftchapfont}{\ptserifbold}
+\renewcommand{\cftsecfont}{\ptserifitalic}
+\renewcommand{\cftchappagefont}{\ptserifbold}
+\renewcommand{\cftsecpagefont}{\ptserifitalic}
+
+% --- Стили заголовков ---
+\titleformat{\chapter}[block]
+  {\centering\ptserifbold\fontsize{14pt}{16pt}\selectfont}
+  {\thechapter}{1em}{}
+  [\vspace{12pt}]
+\titlespacing*{\chapter}{0pt}{0pt}{12pt}
+
+\titleformat{\section}[block]
+  {\ptserifitalic\fontsize{12pt}{14pt}\selectfont}
+  {\thesection}{1em}{}
+  [\vspace{8pt}]
+\titlespacing*{\section}{0pt}{8pt}{8pt}
+
+% --- Без номера для разделителей между частями ---
+\newcommand{\partdivider}[1]{\cleardoublepage\begin{center}\ptserifbold\fontsize{14pt}{16pt}\selectfont #1\end{center}\vspace{12pt}}
+
+% --- Без иллюстраций, ч/б стиль ---
+% (дополнительно: отключить вставку картинок через Pandoc)
+
+% --- Начало документа ---
+\begin{document}
+
+$if(title)$
+  {\centering\ptserifbold\fontsize{18pt}{20pt}\selectfont $title$\par}
+  \vspace{2em}
+$endif$
+
+$if(author)$
+  {\centering\ptserifbold\fontsize{14pt}{16pt}\selectfont $author$\par}
+  \vspace{2em}
+$endif$
+
+$if(toc)$
+  {\tableofcontents}
+  \newpage
+$endif$
+
+$body$
+
+\end{document} 

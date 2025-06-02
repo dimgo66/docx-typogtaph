@@ -1,0 +1,2 @@
+2025-05-27 03:49:37,990 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:8c39c3d5-15a0-4c9d-a8fd-f79d9ce42fb4 - Начало конвертации DOCX в HTML: workspace/input/Проза Марина Мишанина_юность.docx
+2025-05-27 03:49:38,157 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:8c39c3d5-15a0-4c9d-a8fd-f79d9ce42fb4 - Файл успешно сконвертирован в HTML: workspace/processing/8c39c3d5-15a0-4c9d-a8fd-f79d9ce42fb4/stage1.html

@@ -1,0 +1,10 @@
+2025-05-27 02:46:43,138 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Начало нового сеанса обработки конвейера. Correlation ID: 89e89e44-78f6-49be-8031-fd8d9eced900
+2025-05-27 02:46:43,139 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Входной файл: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 02:46:43,139 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Запуск этапа: DocxToHtmlConversion
+2025-05-27 02:46:43,139 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Начало конвертации DOCX в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 02:46:44,208 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Файл успешно сконвертирован в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/89e89e44-78f6-49be-8031-fd8d9eced900/DocxToHtmlConversion/output_temp.html
+2025-05-27 02:46:44,209 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Этап DocxToHtmlConversion успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/89e89e44-78f6-49be-8031-fd8d9eced900/DocxToHtmlConversion/output_temp.html
+2025-05-27 02:46:44,209 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Запуск этапа: TypografProcessorModule
+2025-05-27 02:46:45,612 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Этап TypografProcessorModule успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/89e89e44-78f6-49be-8031-fd8d9eced900/TypografProcessorModule/output_temp_typograf.html
+2025-05-27 02:46:45,612 - orchestrator - INFO - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Запуск этапа: LanguageToolProcessorModule
+2025-05-27 02:56:45,616 - orchestrator - ERROR - CORR_ID:89e89e44-78f6-49be-8031-fd8d9eced900 - Этап LanguageToolProcessorModule завершился ошибкой. Выходной файл отчета не создан или не найден: None

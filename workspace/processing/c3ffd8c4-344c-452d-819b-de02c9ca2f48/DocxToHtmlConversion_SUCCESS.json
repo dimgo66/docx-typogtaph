@@ -1,0 +1,11 @@
+{
+    "module": "src.pipeline.docx_to_html_converter",
+    "pipeline_stage": "DocxToHtmlConversion",
+    "correlation_id": "c3ffd8c4-344c-452d-819b-de02c9ca2f48",
+    "input_file": "workspace/input/Проза БЭНД Александра Кулагина.docx",
+    "output_file": "workspace/processing/c3ffd8c4-344c-452d-819b-de02c9ca2f48/stage1.html",
+    "status": "success",
+    "timestamp_start": "2025-05-27T00:49:18.842466+00:00",
+    "error_details": null,
+    "timestamp_end": "2025-05-27T00:49:19.177235+00:00"
+}

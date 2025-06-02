@@ -1,0 +1,2 @@
+2025-05-27 03:13:02,152 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:30ad67d4-2120-44db-a657-8b8339dfdd45 - Начало конвертации DOCX в HTML: textinput/94_01_Каминский .docx
+2025-05-27 03:13:02,559 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:30ad67d4-2120-44db-a657-8b8339dfdd45 - Файл успешно сконвертирован в HTML: workspace/output/94_01_Каминский.html

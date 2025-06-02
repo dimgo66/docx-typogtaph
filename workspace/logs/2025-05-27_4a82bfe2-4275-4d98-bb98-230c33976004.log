@@ -1,0 +1,9 @@
+2025-05-27 02:53:49,578 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Начало нового сеанса обработки конвейера. Correlation ID: 4a82bfe2-4275-4d98-bb98-230c33976004
+2025-05-27 02:53:49,579 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Входной файл: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 02:53:49,579 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Запуск этапа: DocxToHtmlConversion
+2025-05-27 02:53:49,579 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Начало конвертации DOCX в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 02:53:49,963 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Файл успешно сконвертирован в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/4a82bfe2-4275-4d98-bb98-230c33976004/DocxToHtmlConversion/output_temp.html
+2025-05-27 02:53:49,964 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Этап DocxToHtmlConversion успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/4a82bfe2-4275-4d98-bb98-230c33976004/DocxToHtmlConversion/output_temp.html
+2025-05-27 02:53:49,964 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Запуск этапа: TypografProcessorModule
+2025-05-27 02:53:50,683 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Этап TypografProcessorModule успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/4a82bfe2-4275-4d98-bb98-230c33976004/TypografProcessorModule/output_temp_typograf.html
+2025-05-27 02:53:50,683 - orchestrator - INFO - CORR_ID:4a82bfe2-4275-4d98-bb98-230c33976004 - Запуск этапа: LanguageToolProcessorModule

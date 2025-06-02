@@ -1,0 +1,2 @@
+2025-05-27 03:40:11,682 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:a8c2efe1-2a41-4ad2-8c89-95f72e55c2ce - Начало конвертации DOCX в HTML: textinput/94_02_Балтин .docx
+2025-05-27 03:40:12,002 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:a8c2efe1-2a41-4ad2-8c89-95f72e55c2ce - Файл успешно сконвертирован в HTML: workspace/output/94_02_Балтин.html

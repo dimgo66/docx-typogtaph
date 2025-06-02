@@ -1,0 +1,26 @@
+/**
+ * @file: test-minimal-headers.css
+ * @description: Минимальный тест для проверки базового вывода в колонтитулы PrinceXML.
+ * @created: 2024-07-10
+ */
+
+@page {
+    size: A5;
+    margin: 20mm; /* Одинаковые поля для простоты */
+
+    @top-left {
+        content: "ТЕСТ ВЕРХНИЙ ЛЕВЫЙ";
+        border: 1px solid red; /* Рамка для наглядности */
+        padding: 2mm;
+        background-color: #ffeeee;
+    }
+
+    @bottom-right {
+        content: "ТЕСТ НИЖНИЙ ПРАВЫЙ";
+        border: 1px solid blue; /* Рамка для наглядности */
+        padding: 2mm;
+        background-color: #eeeeff;
+    }
+}
+
+/* Больше никаких других правил CSS в этом файле! */ 

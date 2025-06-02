@@ -1,0 +1,11 @@
+{
+    "module": "src.pipeline.docx_to_html_converter",
+    "pipeline_stage": "DocxToHtmlConversion",
+    "correlation_id": "bfef5248-671a-41a8-aa6d-fba2e2445c4b",
+    "input_file": "workspace/input/Проза Артур Другой_Юность.docx",
+    "output_file": "workspace/processing/bfef5248-671a-41a8-aa6d-fba2e2445c4b/stage1.html",
+    "status": "success",
+    "timestamp_start": "2025-05-27T00:45:55.984943+00:00",
+    "error_details": null,
+    "timestamp_end": "2025-05-27T00:45:56.131671+00:00"
+}

@@ -1,0 +1,9 @@
+{
+    "module": "src.pipeline.autocorrect_processor_module",
+    "correlation_id": "6eb8404b-2bd6-4ec1-9a3b-c35c7fcbd41e",
+    "input_file": "workspace/output/94_02_Балтин.html",
+    "output_file": "workspace/processing/6eb8404b-2bd6-4ec1-9a3b-c35c7fcbd41e/94_02_Балтин_autocorrected.html",
+    "status": "success",
+    "approved": 0,
+    "rejected": 26
+}

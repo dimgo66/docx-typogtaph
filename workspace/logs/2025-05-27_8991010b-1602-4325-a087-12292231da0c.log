@@ -1,0 +1,2 @@
+2025-05-27 04:33:54,090 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:8991010b-1602-4325-a087-12292231da0c - Начало конвертации DOCX в HTML: workspace/input/Былое и думы Борис Минаев Поколение Юры.docx
+2025-05-27 04:33:54,194 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:8991010b-1602-4325-a087-12292231da0c - Файл успешно сконвертирован в HTML: workspace/output/Былое и думы Борис Минаев Поколение Юры.html

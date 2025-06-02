@@ -1,0 +1,2 @@
+2025-05-27 03:45:55,984 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:bfef5248-671a-41a8-aa6d-fba2e2445c4b - Начало конвертации DOCX в HTML: workspace/input/Проза Артур Другой_Юность.docx
+2025-05-27 03:45:56,131 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:bfef5248-671a-41a8-aa6d-fba2e2445c4b - Файл успешно сконвертирован в HTML: workspace/processing/bfef5248-671a-41a8-aa6d-fba2e2445c4b/stage1.html

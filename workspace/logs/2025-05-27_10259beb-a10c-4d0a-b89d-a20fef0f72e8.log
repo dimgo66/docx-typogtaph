@@ -1,0 +1,8 @@
+2025-05-27 01:11:36,613 - orchestrator - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Начало нового сеанса обработки конвейера. Correlation ID: 10259beb-a10c-4d0a-b89d-a20fef0f72e8
+2025-05-27 01:11:36,613 - orchestrator - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Входной файл: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 01:11:36,613 - orchestrator - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Запуск этапа: DocxToHtmlConversion
+2025-05-27 01:11:36,613 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Начало конвертации DOCX в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/94_01_Каминский .docx
+2025-05-27 01:11:37,482 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Файл успешно сконвертирован в HTML: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/10259beb-a10c-4d0a-b89d-a20fef0f72e8/DocxToHtmlConversion/output_temp.html
+2025-05-27 01:11:37,483 - orchestrator - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Этап DocxToHtmlConversion успешно завершен. Результат: /Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/10259beb-a10c-4d0a-b89d-a20fef0f72e8/DocxToHtmlConversion/output_temp.html
+2025-05-27 01:11:37,483 - orchestrator - INFO - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Запуск этапа: LanguageToolProcessorModule
+2025-05-27 01:21:37,510 - orchestrator - ERROR - CORR_ID:10259beb-a10c-4d0a-b89d-a20fef0f72e8 - Этап LanguageToolProcessorModule завершился ошибкой. Выходной файл отчета не создан или не найден: None

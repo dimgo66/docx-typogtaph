@@ -1,0 +1,2 @@
+2025-05-27 03:49:33,504 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:74128348-f7d4-41a0-843c-5eaede20a109 - Начало конвертации DOCX в HTML: workspace/input/Проза БЭНД Петр Кравченко.docx
+2025-05-27 03:49:33,694 - src.pipeline.docx_to_html_converter - INFO - CORR_ID:74128348-f7d4-41a0-843c-5eaede20a109 - Файл успешно сконвертирован в HTML: workspace/processing/74128348-f7d4-41a0-843c-5eaede20a109/stage1.html
