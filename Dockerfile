@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apt-get update && apt-get install -y wget tar curl && \
+RUN apt-get update && apt-get install -y wget tar curl openjdk-17-jre-headless && \
     wget https://github.com/jgm/pandoc/releases/download/3.2/pandoc-3.2-1-amd64.deb && \
     apt-get install -y ./pandoc-3.2-1-amd64.deb && \
     rm pandoc-3.2-1-amd64.deb && \
