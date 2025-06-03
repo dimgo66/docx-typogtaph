@@ -203,6 +203,39 @@ def get_ai_correction(error_message, rule_id, original_text_segment, context_bef
         print(f"Ошибка при обращении к OpenRouter API: {e}", file=sys.stderr)
         return None
 
+def ensure_html_lang_ru(html_file_path):
+    """
+    Проверяет и при необходимости устанавливает lang="ru" в теге <html> HTML-файла.
+    Если lang отсутствует или отличается от "ru", заменяет/добавляет его.
+    """
+    try:
+        with open(html_file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        # Ищем тег <html ...>
+        html_tag_match = re.search(r'<html[^>]*>', content, re.IGNORECASE)
+        if not html_tag_match:
+            print(f"[WARN] Не найден тег <html> в файле {html_file_path}", file=sys.stderr)
+            return False
+        html_tag = html_tag_match.group(0)
+        # Проверяем наличие lang
+        if re.search(r'lang\s*=\s*"ru"', html_tag, re.IGNORECASE):
+            return True  # Уже корректно
+        # Если есть другой lang, заменяем
+        if re.search(r'lang\s*=\s*"[^"]*"', html_tag, re.IGNORECASE):
+            new_html_tag = re.sub(r'lang\s*=\s*"[^"]*"', 'lang="ru"', html_tag, flags=re.IGNORECASE)
+        else:
+            # lang отсутствует — добавляем
+            new_html_tag = html_tag[:-1] + ' lang="ru">'
+        # Заменяем тег в контенте
+        new_content = content.replace(html_tag, new_html_tag, 1)
+        with open(html_file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        print(f"[INFO] lang=\"ru\" установлен в <html> для файла {html_file_path}")
+        return True
+    except Exception as e:
+        print(f"[ERROR] Не удалось обработать lang в HTML: {e}", file=sys.stderr)
+        return False
+
 def run_languagetool(html_file_path, output_dir=None):
     """
     Запускает LanguageTool для проверки HTML-файла и сохраняет JSON-отчет.
@@ -238,6 +271,9 @@ def run_languagetool(html_file_path, output_dir=None):
         report_file_path = os.path.join(output_dir, f"{file_name_without_ext}_languagetool_report.json")
     else:
         report_file_path = os.path.join(os.path.dirname(html_file_path), f"{file_name_without_ext}_languagetool_report.json")
+
+    # Перед запуском LanguageTool — гарантируем lang="ru" в <html>
+    ensure_html_lang_ru(html_file_path)
 
     command = [
         "java",
