@@ -4,6 +4,8 @@ import json
 import logging
 import subprocess
 from typing import Optional
+import tempfile
+from bs4 import BeautifulSoup
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../tools')))
 from check_text_languagetool import ensure_html_lang_ru
@@ -29,6 +31,15 @@ class LanguageToolProcessorModule:
         os.makedirs(output_dir, exist_ok=True)
         base_name = os.path.splitext(os.path.basename(html_path))[0]
         output_report_path = os.path.join(output_dir, f"{base_name}_languagetool_report.json")
+        # --- Извлекаем plain text из HTML ---
+        with open(html_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        soup = BeautifulSoup(html_content, 'html.parser')
+        text = soup.body.get_text(separator='\n', strip=True) if soup.body else soup.get_text(separator='\n', strip=True)
+        with tempfile.NamedTemporaryFile('w+', delete=False, encoding='utf-8', suffix='.txt') as tmp_txt:
+            tmp_txt.write(text)
+            tmp_txt_path = tmp_txt.name
+        # --- Запускаем LanguageTool на plain text ---
         command = [
             "java",
             "-Xmx4G",
@@ -37,7 +48,7 @@ class LanguageToolProcessorModule:
             "-l", "ru",
             "-c", "utf-8",
             "--json",
-            html_path
+            tmp_txt_path
         ]
         try:
             with open(output_report_path, "w", encoding="utf-8") as fout:
@@ -49,6 +60,11 @@ class LanguageToolProcessorModule:
         except Exception as e:
             self.logger.error(f"Ошибка при запуске LanguageTool: {e}")
             return None
+        finally:
+            try:
+                os.remove(tmp_txt_path)
+            except Exception:
+                pass
         # Сохраняем служебный SUCCESS.json
         success_path = os.path.join(output_dir, "LanguageToolProcessorModule_SUCCESS.json")
         with open(success_path, "w", encoding="utf-8") as f:
