@@ -1,0 +1,11 @@
+{
+    "module": "src.pipeline.docx_to_html_converter",
+    "pipeline_stage": "DocxToHtmlConversion",
+    "correlation_id": "c2f87c7f-2660-44aa-a7ba-6b3c66d87536",
+    "input_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/docx",
+    "output_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/c2f87c7f-2660-44aa-a7ba-6b3c66d87536/DocxToHtmlConversion/Былое и думы Борис Минаев Поколение Юры_final.html",
+    "status": "success",
+    "timestamp": "2025-06-03T21:40:50.144156+00:00",
+    "error_details": null,
+    "timestamp_end": "2025-06-03T21:40:50.725939+00:00"
+}
