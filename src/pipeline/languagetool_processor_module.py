@@ -5,6 +5,9 @@ import logging
 import subprocess
 from typing import Optional
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../tools')))
+from check_text_languagetool import ensure_html_lang_ru
+
 class LanguageToolProcessorModule:
     """
     Модуль для запуска проверки HTML-файла с помощью LanguageTool и интеграции с ИИ.
@@ -21,6 +24,8 @@ class LanguageToolProcessorModule:
         if not os.path.exists(html_path):
             self.logger.error(f"HTML-файл не найден: {html_path}")
             return None
+        # Гарантируем lang="ru" в <html>
+        ensure_html_lang_ru(html_path)
         os.makedirs(output_dir, exist_ok=True)
         base_name = os.path.splitext(os.path.basename(html_path))[0]
         output_report_path = os.path.join(output_dir, f"{base_name}_languagetool_report.json")
