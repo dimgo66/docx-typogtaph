@@ -94,6 +94,9 @@ def run_pipeline(input_file_name, basename=None):
             # После этапа записываем новый путь в meta-файл
             with open(meta_path, "w") as f:
                 f.write(output_from_stage1)
+            # Логируем содержимое meta-файла и список файлов в директории
+            main_logger.info(f"[DEBUG] После этапа {stage1_module_name}: meta-файл содержит: {output_from_stage1}")
+            main_logger.info(f"[DEBUG] Содержимое директории {stage1_processing_dir}: {os.listdir(stage1_processing_dir)}")
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage1_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage1_module_name}")
@@ -126,6 +129,8 @@ def run_pipeline(input_file_name, basename=None):
             main_logger.info(f"Этап {stage2_module_name} успешно завершен. Результат: {output_from_stage2_html}")
             with open(meta_path, "w") as f:
                 f.write(output_from_stage2_html)
+            main_logger.info(f"[DEBUG] После этапа {stage2_module_name}: meta-файл содержит: {output_from_stage2_html}")
+            main_logger.info(f"[DEBUG] Содержимое директории {stage2_processing_dir}: {os.listdir(stage2_processing_dir)}")
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage2_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage2_module_name}")
@@ -158,6 +163,8 @@ def run_pipeline(input_file_name, basename=None):
             main_logger.info(f"Этап {stage3_module_name} успешно завершен. Отчет: {output_from_stage3_report}")
             # current_input_path не меняется, нужен HTML для автокоррекции
             # Но если нужно передать путь отчёта — можно записать его в meta-файл
+            main_logger.info(f"[DEBUG] После этапа {stage3_module_name}: meta-файл содержит: {current_input_path}")
+            main_logger.info(f"[DEBUG] Содержимое директории {stage3_processing_dir}: {os.listdir(stage3_processing_dir)}")
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage3_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage3_module_name}")
@@ -192,6 +199,8 @@ def run_pipeline(input_file_name, basename=None):
             main_logger.info(f"Этап {stage4_module_name} успешно завершен. Результат: {output_from_stage4_html}")
             with open(meta_path, "w") as f:
                 f.write(output_from_stage4_html)
+            main_logger.info(f"[DEBUG] После этапа {stage4_module_name}: meta-файл содержит: {output_from_stage4_html}")
+            main_logger.info(f"[DEBUG] Содержимое директории {stage4_processing_dir}: {os.listdir(stage4_processing_dir)}")
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage4_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage4_module_name}")
