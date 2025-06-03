@@ -1,7 +1,10 @@
 providers = ["python"]
 
 [phases.setup]
-nixPkgs = ["python311Full"]
+nixPkgs = ["python311"]
+cmds = [
+  "python3 -m ensurepip --upgrade"
+]
 
 [phases.install]
 cmds = [
