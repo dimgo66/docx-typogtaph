@@ -221,6 +221,29 @@ def run_pipeline(input_file_name, basename=None):
         main_logger.info(f"Статус пайплайна сохранен в: {orchestrator_status_path}")
     except Exception as e:
         main_logger.error(f"Ошибка при сохранении финального статус-файла оркестратора: {e}", exc_info=True)
+
+    # === Явное копирование итоговых файлов в workspace/output/ ===
+    try:
+        import shutil
+        # HTML
+        final_html_name = f"{basename}_final.html"
+        final_html_dst = os.path.join(OUTPUT_DIR, final_html_name)
+        if os.path.abspath(output_html_path) != os.path.abspath(final_html_dst):
+            shutil.copy2(output_html_path, final_html_dst)
+            main_logger.info(f"Итоговый HTML файл скопирован в: {final_html_dst}")
+        else:
+            main_logger.info(f"Итоговый HTML файл уже находится в: {final_html_dst}")
+        # DOCX
+        final_docx_name = f"{basename}_final.docx"
+        final_docx_dst = os.path.join(OUTPUT_DIR, final_docx_name)
+        if os.path.abspath(temp_docx_path) != os.path.abspath(final_docx_dst):
+            shutil.copy2(temp_docx_path, final_docx_dst)
+            main_logger.info(f"Итоговый DOCX файл скопирован в: {final_docx_dst}")
+        else:
+            main_logger.info(f"Итоговый DOCX файл уже находится в: {final_docx_dst}")
+    except Exception as e:
+        main_logger.error(f"Ошибка при копировании итоговых файлов в workspace/output/: {e}", exc_info=True)
+
     return True
 
 
