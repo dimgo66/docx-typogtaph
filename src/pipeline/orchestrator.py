@@ -109,11 +109,11 @@ def run_pipeline(input_file_name, basename=None):
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage1_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage1_module_name}")
-            return False
+            # return False  # Временно не прерываем пайплайн для диагностики
         except Exception as e:
             main_logger.error(f"Непредвиденная системная ошибка на этапе {stage1_module_name}: {str(e)}", exc_info=True)
             main_logger.error(f"Остановка конвейера после системной ошибки на этапе: {stage1_module_name}")
-            return False
+            # return False  # Временно не прерываем пайплайн для диагностики
 
         # Перед следующим этапом читаем путь из meta-файла
         with open(meta_path, "r") as f:
@@ -177,11 +177,11 @@ def run_pipeline(input_file_name, basename=None):
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage3_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage3_module_name}")
-            return False
+            # return False  # Временно не прерываем пайплайн для диагностики
         except Exception as e:
             main_logger.error(f"Непредвиденная системная ошибка на этапе {stage3_module_name}: {str(e)}", exc_info=True)
             main_logger.error(f"Остановка конвейера после системной ошибки на этапе: {stage3_module_name}")
-            return False
+            # return False  # Временно не прерываем пайплайн для диагностики
 
         # Для автокоррекции нужен и HTML, и отчёт, поэтому current_input_path не меняем
         # Но если нужно, можно записать оба пути в meta-файл в формате JSON
