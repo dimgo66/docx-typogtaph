@@ -8,7 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const Typograf = require('../typograf-7.4.4/dist/typograf.js');
+const Typograf = require(path.join(__dirname, '../typograf-7.4.4/dist/typograf.js'));
 const { JSDOM } = require('jsdom');
 
 const [,, INPUT = 'src/index.html', OUTPUT = 'reports/index.typograf.html'] = process.argv;

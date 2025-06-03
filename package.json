@@ -1,8 +1,8 @@
 {
-  "scripts": {
-    "lint-text": "FILE=${npm_config_file:-src/index.html} && java -jar LanguageTool-6.6/languagetool-commandline.jar -l ru $FILE > reports/lt-report.txt && node tools/parse-lt-report.js reports/lt-report.txt $FILE"
-  },
+  "name": "pipeline-js-deps",
+  "version": "1.0.0",
+  "description": "JS dependencies for typografize and related tools",
   "dependencies": {
     "jsdom": "^26.1.0"
   }
-}
+} 
