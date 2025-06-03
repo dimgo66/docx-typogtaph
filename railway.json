@@ -1,0 +1,15 @@
+{
+  "deploy": {
+    "runtime": "V2",
+    "numReplicas": 1,
+    "startCommand": "gunicorn webapp.app:app"
+  }
+}
+
+{
+  "deploy": {
+    "runtime": "V2",
+    "numReplicas": 1,
+    "startCommand": "python webapp/worker.py"
+  }
+} 
