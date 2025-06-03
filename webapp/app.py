@@ -102,10 +102,15 @@ def process_file_worker():
                 logging.info(f"Пайплайн завершён для: {original_filename_user}")
             except subprocess.CalledProcessError as e:
                 error_output = e.stderr or e.stdout or "Неизвестная ошибка при обработке."
-                logging.error(f"Ошибка пайплайна: {error_output.strip()}")
-                update_file_status(original_filename, "ошибка", error_message=error_output.strip())
-                processing_queue.task_done()
-                continue
+                # Не считаем LANGTOOL_DEBUG ошибкой
+                if '===LANGTOOL_DEBUG===' in error_output:
+                    logging.info(f"[LANGTOOL_DEBUG] {error_output.strip()}")
+                    # Продолжаем обработку, не выставляем статус 'ошибка'
+                else:
+                    logging.error(f"Ошибка пайплайна: {error_output.strip()}")
+                    update_file_status(original_filename, "ошибка", error_message=error_output.strip())
+                    processing_queue.task_done()
+                    continue
             except Exception as e:
                 logging.error(f"Исключение при запуске пайплайна: {e}")
                 update_file_status(original_filename, "ошибка", error_message=str(e))
