@@ -9,6 +9,7 @@ import subprocess
 import os
 import json
 import datetime
+import traceback
 from ..utils.logger_setup import setup_logging # Исправляем на setup_logging
 from ..utils.exceptions import PandocConversionError, InputFileNotFoundError, FileOperationError
 
@@ -78,20 +79,20 @@ def convert_docx_to_html(input_docx_path, output_html_path, processing_dir, corr
 
     except InputFileNotFoundError as e:
         logger.error(f"Ошибка: {str(e)}", exc_info=True)
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": logger.formatException(sys.exc_info()[2])}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": traceback.format_exc()}
         # Перебрасываем исключение, чтобы оркестратор мог его поймать
         raise
     except PandocConversionError as e:
         # Уже залогировано выше, здесь только обновляем статус
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "details": e.details, "traceback": logger.formatException(sys.exc_info()[2])}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "details": e.details, "traceback": traceback.format_exc()}
         raise
     except FileOperationError as e:
         logger.error(f"Ошибка операции с файлом: {str(e)}", exc_info=True)
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "details": e.details, "traceback": logger.formatException(sys.exc_info()[2])}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "details": e.details, "traceback": traceback.format_exc()}
         raise
     except Exception as e:
         logger.error(f"Непредвиденная ошибка при конвертации DOCX в HTML: {str(e)}", exc_info=True)
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": logger.formatException(sys.exc_info()[2])}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": traceback.format_exc()}
         # Оборачиваем в наше общее исключение для консистентности, если нужно
         # raise FileOperationError(f"Непредвиденная ошибка: {str(e)}", original_exception=e) # Лучше перебросить оригинальное исключение или наше кастомное
         raise TextProcessingError(f"Непредвиденная ошибка на этапе {PIPELINE_STAGE_NAME}: {str(e)}", details={'original_exception': str(e)}) # Оборачиваем в TextProcessingError
