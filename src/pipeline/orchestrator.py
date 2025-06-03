@@ -24,6 +24,9 @@ from .typograf_processor_module import TypografProcessorModule
 from .languagetool_processor_module import LanguageToolProcessorModule
 from .autocorrect_processor_module import AutocorrectProcessorModule
 from .html_to_docx_processor_module import HtmlToDocxProcessorModule
+import shutil
+import unicodedata
+import string
 
 # Определяем имена этапов для новых модулей
 LANGUAGETOOL_STAGE = "LanguageToolProcessorModule"
@@ -43,6 +46,10 @@ OUTPUT_DIR = os.path.join(WORKSPACE_ROOT, 'output') # Директория дл�
 os.makedirs(TEXTINPUT_DIR, exist_ok=True)
 os.makedirs(PROCESSING_DIR_BASE, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def safe_ascii_filename(name):
+    # Транслитерация: оставить только ASCII-символы, заменить остальные на '_'
+    return ''.join(c if c in string.ascii_letters + string.digits + ' _-.' else '_' for c in unicodedata.normalize('NFKD', name))
 
 def run_pipeline(input_file_name, basename=None):
     correlation_id = str(uuid.uuid4())
@@ -213,21 +220,50 @@ def run_pipeline(input_file_name, basename=None):
         with open(meta_path, "r") as f:
             current_input_path = f.read().strip()
 
-        # Сохраняем итоговый HTML в output с именем исходного файла, но с расширением .html
-        output_html_name = f"{basename}_final.html"
-        output_html_path = os.path.join(OUTPUT_DIR, output_html_name)
+        # Проверка и создание output-папки с логированием
         try:
-            import shutil
+            os.makedirs(OUTPUT_DIR, exist_ok=True)
+            main_logger.info(f"[DEBUG] OUTPUT_DIR создан или уже существует: {OUTPUT_DIR}")
+            main_logger.info(f"[DEBUG] Права на OUTPUT_DIR: {oct(os.stat(OUTPUT_DIR).st_mode)}")
+        except Exception as e:
+            main_logger.error(f"[DEBUG] Ошибка при создании OUTPUT_DIR: {e}")
+
+        # Тестовое создание файла для проверки прав
+        test_file_path = os.path.join(OUTPUT_DIR, "test_output_file.txt")
+        try:
+            with open(test_file_path, "w") as tf:
+                tf.write("test")
+            main_logger.info(f"[DEBUG] Тестовый файл успешно создан: {test_file_path}")
+        except Exception as e:
+            main_logger.error(f"[DEBUG] Ошибка при создании тестового файла: {e}")
+
+        # Транслитерация имени итогового файла для диагностики
+        output_html_name = f"{basename}_final.html"
+        output_docx_name = f"{basename}_final.docx"
+        ascii_html_name = safe_ascii_filename(output_html_name)
+        ascii_docx_name = safe_ascii_filename(output_docx_name)
+        output_html_path = os.path.join(OUTPUT_DIR, ascii_html_name)
+        output_docx_path = os.path.join(OUTPUT_DIR, ascii_docx_name)
+        main_logger.info(f"[DEBUG] Итоговое имя HTML: {output_html_name} | ASCII: {ascii_html_name}")
+        main_logger.info(f"[DEBUG] Итоговое имя DOCX: {output_docx_name} | ASCII: {ascii_docx_name}")
+
+        # Копирование HTML
+        try:
             shutil.copy2(current_input_path, output_html_path)
             main_logger.info(f"Итоговый HTML файл сохранен в: {output_html_path}")
         except Exception as e:
             main_logger.error(f"Ошибка при сохранении итогового HTML файла: {e}", exc_info=True)
 
+        # Проверка содержимого output-папки
+        try:
+            main_logger.info(f"[DEBUG] Содержимое OUTPUT_DIR после копирования: {os.listdir(OUTPUT_DIR)}")
+        except Exception as e:
+            main_logger.error(f"[DEBUG] Ошибка при просмотре содержимого OUTPUT_DIR: {e}")
+
         # === Новый этап: HTML → DOCX ===
         try:
             html2docx = HtmlToDocxProcessorModule(correlation_id)
-            final_docx_name = basename
-            temp_docx_path = html2docx.run(output_html_path, OUTPUT_DIR, basename=final_docx_name)
+            temp_docx_path = html2docx.run(output_html_path, OUTPUT_DIR, basename=ascii_docx_name)
             if not temp_docx_path or not os.path.exists(temp_docx_path):
                 main_logger.error(f"Ошибка на этапе конвертации HTML → DOCX. DOCX не создан: {temp_docx_path}")
                 return False
@@ -235,6 +271,12 @@ def run_pipeline(input_file_name, basename=None):
         except Exception as e:
             main_logger.error(f"Ошибка при экспорте DOCX: {e}", exc_info=True)
             return False
+
+        # Проверка содержимого output-папки после DOCX
+        try:
+            main_logger.info(f"[DEBUG] Содержимое OUTPUT_DIR после DOCX: {os.listdir(OUTPUT_DIR)}")
+        except Exception as e:
+            main_logger.error(f"[DEBUG] Ошибка при просмотре содержимого OUTPUT_DIR после DOCX: {e}")
 
         orchestrator_status = {
             "status": "success", 
