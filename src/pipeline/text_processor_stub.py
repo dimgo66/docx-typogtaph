@@ -9,6 +9,7 @@ import os
 import json
 import shutil
 import datetime
+import traceback
 from ..utils.logger_setup import setup_logger
 from ..utils.exceptions import InputFileNotFoundError, FileOperationError # Можем использовать общие ошибки
 
@@ -51,15 +52,15 @@ def process_text_stub(input_html_path, output_html_path, processing_dir, correla
 
     except InputFileNotFoundError as e:
         logger.error(f"Ошибка: {str(e)}", exc_info=True)
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": logger.formatException(e.__traceback__) if hasattr(e, '__traceback__') else None}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": traceback.format_exc()}
         raise
     except FileOperationError as e:
         logger.error(f"Ошибка операции с файлом: {str(e)}", exc_info=True)
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "details": e.details, "traceback": logger.formatException(e.__traceback__) if hasattr(e, '__traceback__') else None}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "details": e.details, "traceback": traceback.format_exc()}
         raise
     except Exception as e:
         logger.error(f"Непредвиденная ошибка при имитации обработки текста: {str(e)}", exc_info=True)
-        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": logger.formatException(e.__traceback__) if hasattr(e, '__traceback__') else None}
+        status_data["error_details"] = {"type": e.__class__.__name__, "message": str(e), "traceback": traceback.format_exc()}
         raise FileOperationError(f"Непредвиденная ошибка в заглушке: {str(e)}", original_exception=e)
     finally:
         status_data["timestamp_end"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
