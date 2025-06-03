@@ -75,7 +75,8 @@ def setup_logging(correlation_id="global", logger_name="default_logger", level=D
 
     if log_to_file and LOGS_DIR:
         # Имя файла логов: YYYY-MM-DD_correlation_id.log
-        log_file_name = f"{datetime.now().strftime('%Y-%m-%d')}_{correlation_id.replace('/', '_').replace('\\', '_')}.log"
+        safe_correlation_id = correlation_id.replace('/', '_').replace('\\', '_')
+        log_file_name = f"{datetime.now().strftime('%Y-%m-%d')}_{safe_correlation_id}.log"
         log_file_path = os.path.join(LOGS_DIR, log_file_name)
         
         # Обработчик для записи в файл
