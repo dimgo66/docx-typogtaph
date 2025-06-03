@@ -1,0 +1,8 @@
+# Исключаем пользовательские и временные данные
+workspace/output/*
+workspace/processing/*
+workspace/logs/*
+workspace/input/*
+workspace/results/*
+*.log
+*.tmp 
