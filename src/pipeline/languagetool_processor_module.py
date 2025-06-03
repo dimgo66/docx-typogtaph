@@ -80,9 +80,21 @@ class LanguageToolProcessorModule:
             with open(output_report_path, "w", encoding="utf-8") as fout:
                 proc = subprocess.Popen(command, stdout=fout, stderr=subprocess.PIPE)
                 _, stderr = proc.communicate()
-                if proc.returncode != 0:
-                    self.logger.error(f"LanguageTool завершился с ошибкой: {stderr.decode('utf-8', errors='ignore')}")
+                stderr_decoded = stderr.decode('utf-8', errors='ignore') if stderr else ''
+                # Фильтруем нефатальные сообщения
+                non_critical_msgs = [
+                    'Expected text language: Russian',
+                    'Working on',
+                ]
+                def is_non_critical(line):
+                    return any(msg in line for msg in non_critical_msgs)
+                stderr_lines = [line.strip() for line in stderr_decoded.splitlines() if line.strip()]
+                critical_lines = [line for line in stderr_lines if not is_non_critical(line)]
+                if proc.returncode != 0 or critical_lines:
+                    self.logger.error(f"LanguageTool завершился с ошибкой: {stderr_decoded}")
                     return None
+                elif stderr_lines:
+                    self.logger.info(f"[INFO] LanguageTool stderr (нефатальные сообщения): {stderr_decoded}")
         except Exception as e:
             self.logger.error(f"Ошибка при запуске LanguageTool: {e}")
             return None
