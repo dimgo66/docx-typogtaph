@@ -1,0 +1,52 @@
+ar Arabic
+ast-ES Asturian
+be-BY Belarusian
+br-FR Breton
+ca-ES Catalan
+ca-ES-balear Catalan (Balearic)
+ca-ES-valencia Catalan (Valencian)
+crh-UA Crimean Tatar
+da-DK Danish
+de German
+de-AT German (Austria)
+de-CH German (Swiss)
+de-DE German (Germany)
+de-DE-x-simple-language Simple German
+el-GR Greek
+en English
+en-AU English (Australian)
+en-CA English (Canadian)
+en-GB English (GB)
+en-NZ English (New Zealand)
+en-US English (US)
+en-ZA English (South African)
+eo Esperanto
+es Spanish
+es-AR Spanish (voseo)
+fa Persian
+fr French
+fr-BE French (Belgium)
+fr-CA French (Canada)
+fr-CH French (Switzerland)
+ga-IE Irish
+gl-ES Galician
+it Italian
+ja-JP Japanese
+km-KH Khmer
+nl Dutch
+nl-BE Dutch (Belgium)
+pl-PL Polish
+pt Portuguese
+pt-AO Portuguese (Angola preAO)
+pt-BR Portuguese (Brazil)
+pt-MZ Portuguese (Moçambique preAO)
+pt-PT Portuguese (Portugal)
+ro-RO Romanian
+ru-RU Russian
+sk-SK Slovak
+sl-SI Slovenian
+sv Swedish
+ta-IN Tamil
+tl-PH Tagalog
+uk-UA Ukrainian
+zh-CN Chinese
