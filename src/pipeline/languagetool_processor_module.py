@@ -39,6 +39,32 @@ class LanguageToolProcessorModule:
         with tempfile.NamedTemporaryFile('w+', delete=False, encoding='utf-8', suffix='.txt') as tmp_txt:
             tmp_txt.write(text)
             tmp_txt_path = tmp_txt.name
+        # --- Логируем содержимое временного .txt-файла (первые 10 строк) ---
+        try:
+            with open(tmp_txt_path, 'r', encoding='utf-8') as f_txt:
+                lines = f_txt.readlines()
+                preview = ''.join(lines[:10])
+                text_full = ''.join(lines)
+                debug_info = (
+                    f"\n===LANGTOOL_DEBUG===\n"
+                    f"correlation_id: {self.correlation_id}\n"
+                    f"tmp_txt_path: {tmp_txt_path}\n"
+                    f"Кодировка: utf-8\n"
+                    f"Длина текста (символов): {len(text_full)}\n"
+                    f"Первые 10 строк:\n{preview}"
+                    f"\n===END_LANGTOOL_DEBUG===\n"
+                )
+                print(debug_info, file=sys.stderr)
+                print(debug_info)
+                self.logger.info(f"[DEBUG] Содержимое временного .txt-файла для LT (первые 10 строк):\n{preview}")
+                # Дублируем в отдельный лог-файл
+                logs_dir = os.path.join('workspace', 'logs')
+                os.makedirs(logs_dir, exist_ok=True)
+                debug_log_path = os.path.join(logs_dir, 'langtool_debug.log')
+                with open(debug_log_path, 'a', encoding='utf-8') as debug_log:
+                    debug_log.write(debug_info)
+        except Exception as e:
+            self.logger.warning(f"Не удалось прочитать временный .txt-файл для логирования: {e}")
         # --- Запускаем LanguageTool на plain text ---
         command = [
             "java",
