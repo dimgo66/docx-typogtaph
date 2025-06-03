@@ -44,7 +44,7 @@ os.makedirs(TEXTINPUT_DIR, exist_ok=True)
 os.makedirs(PROCESSING_DIR_BASE, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-def run_pipeline(input_file_name): # Теперь принимаем только имя файла
+def run_pipeline(input_file_name, basename=None):
     correlation_id = str(uuid.uuid4())
 
     original_input_path = os.path.join(TEXTINPUT_DIR, input_file_name) # Формируем путь
@@ -66,14 +66,16 @@ def run_pipeline(input_file_name): # Теперь принимаем тольк�
     stage1_module_name = DOCX_TO_HTML_STAGE
     stage1_processing_dir = os.path.join(PROCESSING_DIR_BASE, correlation_id, stage1_module_name)
     # Имя выходного файла для этого этапа (будет переименовано после успешного выполнения)
-    stage1_output_html_temp = os.path.join(stage1_processing_dir, f"output_temp.html") # Используем временное имя
-
+    if basename is None:
+        basename_local = os.path.splitext(input_file_name)[0]
+    else:
+        basename_local = basename
+    stage1_output_html_temp = os.path.join(stage1_processing_dir, f"output_temp.html")
     main_logger.info(f"Запуск этапа: {stage1_module_name}")
     os.makedirs(stage1_processing_dir, exist_ok=True)
-
     try:
         # Модуль convert_docx_to_html сохраняет результат по stage1_output_html_temp
-        output_from_stage1 = convert_docx_to_html(current_input_path, stage1_output_html_temp, stage1_processing_dir, correlation_id)
+        output_from_stage1 = convert_docx_to_html(current_input_path, stage1_output_html_temp, stage1_processing_dir, correlation_id, basename=basename_local)
 
         # Проверяем результат выполнения модуля и статус-файл
         status_file_path = os.path.join(stage1_processing_dir, f"{stage1_module_name}_SUCCESS.json")
@@ -184,7 +186,7 @@ def run_pipeline(input_file_name): # Теперь принимаем тольк�
         return False
 
     # Сохраняем итоговый HTML в output с именем исходного файла, но с расширением .html
-    output_html_name = os.path.splitext(input_file_name)[0] + '.html'
+    output_html_name = f"{basename}_final.html"
     output_html_path = os.path.join(OUTPUT_DIR, output_html_name)
     try:
         import shutil
@@ -196,15 +198,12 @@ def run_pipeline(input_file_name): # Теперь принимаем тольк�
     # === Новый этап: HTML → DOCX ===
     try:
         html2docx = HtmlToDocxProcessorModule(correlation_id)
-        temp_docx_path = html2docx.run(output_html_path, OUTPUT_DIR)
+        final_docx_name = basename
+        temp_docx_path = html2docx.run(output_html_path, OUTPUT_DIR, basename=final_docx_name)
         if not temp_docx_path or not os.path.exists(temp_docx_path):
             main_logger.error(f"Ошибка на этапе конвертации HTML → DOCX. DOCX не создан: {temp_docx_path}")
             return False
-        # Переименовываем итоговый DOCX в <basename>_final.docx
-        final_docx_name = os.path.splitext(input_file_name)[0] + '_final.docx'
-        final_docx_path = os.path.join(OUTPUT_DIR, final_docx_name)
-        shutil.move(temp_docx_path, final_docx_path)
-        main_logger.info(f"Итоговый DOCX файл сохранен в: {final_docx_path}")
+        main_logger.info(f"Итоговый DOCX файл сохранен в: {temp_docx_path}")
     except Exception as e:
         main_logger.error(f"Ошибка при экспорте DOCX: {e}", exc_info=True)
         return False
@@ -213,7 +212,7 @@ def run_pipeline(input_file_name): # Теперь принимаем тольк�
         "status": "success", 
         "correlation_id": correlation_id, 
         "final_output_html": output_html_path,
-        "final_output_docx": final_docx_path
+        "final_output_docx": temp_docx_path
     }
     orchestrator_status_path = os.path.join(PROCESSING_DIR_BASE, correlation_id, "pipeline_status.json")
     try:
@@ -228,10 +227,12 @@ def run_pipeline(input_file_name): # Теперь принимаем тольк�
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Запускает конвейер обработки текстового файла.")
     parser.add_argument("input_filename", help="Имя входного файла (например, 'mydoc.docx'), который должен находиться в директории 'textinput'.")
+    parser.add_argument("--basename", help="Оригинальное имя файла без расширения для итоговых файлов.", default=None)
 
     args = parser.parse_args()
 
     input_file_to_process = args.input_filename
+    basename_arg = args.basename
 
     # Формируем полный путь для проверки существования, но в run_pipeline передаем только имя
     full_path_to_check = os.path.join(TEXTINPUT_DIR, input_file_to_process)
@@ -242,7 +243,7 @@ if __name__ == "__main__":
         sys.exit(1) # Выходим с ошибкой
     else:
         print(f"Запуск конвейера для файла: {full_path_to_check}")
-        if run_pipeline(input_file_to_process): # Передаем только имя файла
+        if run_pipeline(input_file_to_process, basename_arg): # Передаем имя файла и basename
             print("Обработка конвейера завершена успешно.")
             sys.exit(0) # Выходим без ошибки
         else:

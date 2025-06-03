@@ -1,10 +1,10 @@
 {
-  "1.docx": {
+  "docx": {
     "status": "готов",
-    "uploaded_at": "2025-06-02T09:53:18.708832",
-    "original_filename": "1.docx",
-    "result": "1_final.docx",
+    "uploaded_at": "2025-06-03T10:55:23.212840",
+    "original_filename_user": "Проза Таня Коврижка_юность.docx",
+    "result": "Проза Таня Коврижка_юность_final.docx",
     "error": null,
-    "updated_at": "2025-06-02T09:53:27.771544"
+    "updated_at": "2025-06-03T10:55:27.684311"
   }
 }

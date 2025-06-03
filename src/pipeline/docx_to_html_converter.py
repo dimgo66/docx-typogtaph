@@ -14,19 +14,19 @@ from ..utils.exceptions import PandocConversionError, InputFileNotFoundError, Fi
 
 PIPELINE_STAGE_NAME = "DocxToHtmlConversion"
 
-def convert_docx_to_html(input_docx_path, output_html_path, processing_dir, correlation_id):
+def convert_docx_to_html(input_docx_path, output_html_path, processing_dir, correlation_id, basename=None):
     logger = setup_logging(logger_name=__name__, correlation_id=correlation_id)
     logger.info(f"Начало конвертации DOCX в HTML: {input_docx_path}")
 
-    status_file_path = os.path.join(processing_dir, f"{PIPELINE_STAGE_NAME}_SUCCESS.json") # Изменено имя статус-файла для консистентности
+    status_file_path = os.path.join(processing_dir, f"{correlation_id}_DocxToHtmlConverter.status.json")
     status_data = {
         "module": __name__,
         "pipeline_stage": PIPELINE_STAGE_NAME,
         "correlation_id": correlation_id,
         "input_file": input_docx_path,
         "output_file": None,
-        "status": "error", # По умолчанию ошибка, меняем на success при успехе
-        "timestamp_start": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "status": "error",
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "error_details": None
     }
 
@@ -36,6 +36,10 @@ def convert_docx_to_html(input_docx_path, output_html_path, processing_dir, corr
 
         # Убедимся, что директория для выходного файла существует
         os.makedirs(os.path.dirname(output_html_path), exist_ok=True)
+
+        # Формируем имя выходного файла
+        if basename is not None:
+            output_html_path = os.path.join(os.path.dirname(output_html_path), f"{basename}_final.html")
 
         # Команда Pandoc
         # Используем --embed-resources для включения изображений и других ресурсов прямо в HTML
@@ -49,6 +53,7 @@ def convert_docx_to_html(input_docx_path, output_html_path, processing_dir, corr
             '--output', output_html_path,
             '--embed-resources',
             '--standalone',
+            '--metadata', 'title=',
             input_docx_path
         ]
 

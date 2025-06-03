@@ -21,7 +21,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-ALLOWED_EXTENSIONS = {'doc', 'docx'}
+ALLOWED_EXTENSIONS = {'doc', 'docx', 'pdf', 'epub', 'html'}
 # Используем директории внутри webapp для удобства
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
@@ -78,22 +78,28 @@ def process_file_worker():
 
     while True:
         try:
-            original_filename, upload_path = processing_queue.get(timeout=1)
-            logging.info(f"Взята задача из очереди: {original_filename}")
+            # Теперь очередь содержит (original_filename, upload_path, basename, original_filename_user)
+            task = processing_queue.get(timeout=1)
+            if len(task) == 4:
+                original_filename, upload_path, basename, original_filename_user = task
+            else:
+                # Для обратной совместимости
+                original_filename, upload_path = task
+                basename = os.path.splitext(original_filename)[0]
+                original_filename_user = original_filename
+            logging.info(f"Взята задача из очереди: {original_filename_user}")
             update_file_status(original_filename, "обрабатывается")
-
             # Копируем файл в textinput для пайплайна
             textinput_path = os.path.join(TEXTINPUT_DIR, original_filename)
             logging.info(f"Копируем файл в textinput: {textinput_path}")
             shutil.copy2(upload_path, textinput_path)
-
             # Запускаем orchestrator.py через subprocess (теперь как модуль)
             try:
-                logging.info(f"Запуск пайплайна для: {original_filename}")
+                logging.info(f"Запуск пайплайна для: {original_filename_user}")
                 result = subprocess.run([
-                    'python3', '-m', 'src.pipeline.orchestrator', original_filename
+                    'python3', '-m', 'src.pipeline.orchestrator', original_filename, '--basename', basename
                 ], check=True, capture_output=True, text=True, cwd=PROJECT_ROOT)
-                logging.info(f"Пайплайн завершён для: {original_filename}")
+                logging.info(f"Пайплайн завершён для: {original_filename_user}")
             except subprocess.CalledProcessError as e:
                 error_output = e.stderr or e.stdout or "Неизвестная ошибка при обработке."
                 logging.error(f"Ошибка пайплайна: {error_output.strip()}")
@@ -105,19 +111,22 @@ def process_file_worker():
                 update_file_status(original_filename, "ошибка", error_message=str(e))
                 processing_queue.task_done()
                 continue
-
-            # Копируем итоговый DOCX из workspace/output в results
-            docx_basename = os.path.splitext(original_filename)[0] + '_final.docx'
-            docx_path = os.path.join(WORKSPACE_OUTPUT_DIR, docx_basename)
-            result_docx_name = docx_basename  # теперь имя совпадает с output
-            result_docx_path = os.path.join(app.config['RESULT_FOLDER'], result_docx_name)
-            if os.path.exists(docx_path):
-                logging.info(f"Результат найден: {docx_path}")
-                shutil.copy2(docx_path, result_docx_path)
-                update_file_status(original_filename, "готов", result_filename=result_docx_name)
-            else:
-                logging.error(f"DOCX-файл не найден: {docx_path}")
-                update_file_status(original_filename, "ошибка", error_message="DOCX-файл не найден после обработки пайплайном.")
+            # Универсальная обработка результатов для всех поддерживаемых форматов
+            ext = os.path.splitext(original_filename)[1].lstrip('.')
+            output_formats = ['docx', 'pdf', 'epub', 'html']
+            found_result = False
+            for fmt in output_formats:
+                result_basename = f"{basename}_final.{fmt}"
+                result_path = os.path.join(WORKSPACE_OUTPUT_DIR, result_basename)
+                if os.path.exists(result_path):
+                    logging.info(f"Результат найден: {result_path}")
+                    shutil.copy2(result_path, os.path.join(app.config['RESULT_FOLDER'], result_basename))
+                    update_file_status(original_filename, "готов", result_filename=result_basename)
+                    found_result = True
+                    break
+            if not found_result:
+                logging.error(f"Результирующий файл не найден для {original_filename_user}")
+                update_file_status(original_filename, "ошибка", error_message="Результирующий файл не найден после обработки пайплайном.")
             processing_queue.task_done()
         except queue.Empty:
             time.sleep(1)
@@ -143,13 +152,21 @@ def upload_file_route(): # Переименовал, чтобы избежать
             flash('Файл не выбран')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            original_filename = secure_filename(file.filename)
+            original_filename_user = file.filename  # Оригинальное имя пользователя
+            original_filename = secure_filename(file.filename)  # Безопасное имя для хранения
+            # Исправление: если имя после secure_filename невалидно (например, '-_.docx'), генерируем уникальное имя
+            if original_filename in ('', '-_.docx', '.docx', '.pdf', '.epub', '.html'):
+                ext = os.path.splitext(original_filename_user)[1] or '.docx'
+                original_filename = f"uploaded_{datetime.now().strftime('%Y%m%d_%H%M%S')}{ext}"
+                logging.warning(f"Некорректное имя файла после secure_filename: '{file.filename}' -> '{original_filename}'. Имя заменено автоматически.")
+            else:
+                logging.info(f"Загружен файл: '{file.filename}' -> '{original_filename}'")
             upload_path = os.path.join(app.config['UPLOAD_FOLDER'], original_filename)
             
             # Проверка, не обрабатывается ли уже такой файл (по имени)
             registry = load_file_registry()
             if original_filename in registry and registry[original_filename].get('status') in ['в очереди', 'обрабатывается']:
-                flash(f'Файл {original_filename} уже находится в обработке.')
+                flash(f'Файл {original_filename_user} уже находится в обработке.')
                 return redirect(request.url)
 
             file.save(upload_path)
@@ -158,14 +175,16 @@ def upload_file_route(): # Переименовал, чтобы избежать
             registry[original_filename] = {
                 'status': "в очереди",
                 'uploaded_at': datetime.now().isoformat(),
-                'original_filename': original_filename,
+                'original_filename_user': original_filename_user,
                 'result': None,
                 'error': None
             }
             save_file_registry(registry)
-            processing_queue.put((original_filename, upload_path))
+            # Передаём оригинальное имя пользователя (без расширения) как basename
+            basename = os.path.splitext(original_filename_user)[0]
+            processing_queue.put((original_filename, upload_path, basename, original_filename_user))
             
-            flash(f'Файл {original_filename} добавлен в очередь на обработку.')
+            flash(f'Файл {original_filename_user} добавлен в очередь на обработку.')
             return redirect(request.url) # Остаемся на той же странице
         else:
             flash('Недопустимый формат файла')
@@ -185,13 +204,13 @@ def get_status():
 def download_file(filename):
     """Позволяет скачать обработанный файл и автоматически удалить его после скачивания."""
     registry = load_file_registry()
-    # Ищем по имени оригинального файла, чтобы найти имя результирующего файла
+    # Ищем по имени результирующего файла (универсально для всех форматов)
     file_to_download = None
     result_filename_to_serve = None
     original_filename_to_delete = None
 
     for original_fn, data in registry.items():
-        if data.get('result') == filename: # Если имя файла в URL это имя результирующего файла
+        if data.get('result') == filename:  # Если имя файла в URL это имя результирующего файла
             file_to_download = data
             result_filename_to_serve = filename
             original_filename_to_delete = original_fn
@@ -241,7 +260,6 @@ def delete_file_route(original_filename): # Переименовал
 
     if secured_original_filename in registry:
         file_data = registry[secured_original_filename]
-        
         # Удаляем загруженный файл
         upload_path = os.path.join(app.config['UPLOAD_FOLDER'], secured_original_filename)
         if os.path.exists(upload_path):
@@ -250,8 +268,7 @@ def delete_file_route(original_filename): # Переименовал
             except OSError as e:
                 flash(f'Ошибка при удалении загруженного файла {secured_original_filename}: {e}')
                 # Продолжаем, чтобы удалить запись из реестра и результат
-        
-        # Удаляем результирующий файл, если он есть
+        # Удаляем результирующий файл, если он есть (универсально для всех форматов)
         if file_data.get('result'):
             result_path = os.path.join(app.config['RESULT_FOLDER'], file_data['result'])
             if os.path.exists(result_path):
@@ -260,14 +277,12 @@ def delete_file_route(original_filename): # Переименовал
                 except OSError as e:
                     flash(f'Ошибка при удалении результирующего файла {file_data["result"]}: {e}')
                     # Продолжаем, чтобы удалить запись из реестра
-
         # Удаляем запись из реестра
         del registry[secured_original_filename]
         save_file_registry(registry)
         flash(f'Файл {secured_original_filename} и его результаты удалены.')
     else:
         flash(f'Файл {secured_original_filename} не найден в реестре.')
-    
     return redirect(url_for('upload_file_route'))
 
 if __name__ == '__main__':

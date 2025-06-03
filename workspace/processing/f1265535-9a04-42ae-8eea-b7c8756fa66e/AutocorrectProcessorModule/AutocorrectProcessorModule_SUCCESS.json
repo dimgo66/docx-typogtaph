@@ -1,0 +1,9 @@
+{
+    "module": "src.pipeline.autocorrect_processor_module",
+    "correlation_id": "f1265535-9a04-42ae-8eea-b7c8756fa66e",
+    "input_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/f1265535-9a04-42ae-8eea-b7c8756fa66e/TypografProcessorModule/Проза Таня Коврижка_юность_final_typograf.html",
+    "output_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/f1265535-9a04-42ae-8eea-b7c8756fa66e/AutocorrectProcessorModule/Проза Таня Коврижка_юность_final_typograf_autocorrected.html",
+    "status": "success",
+    "approved": 0,
+    "rejected": 3
+}

@@ -1,0 +1,9 @@
+{
+    "module": "src.pipeline.autocorrect_processor_module",
+    "correlation_id": "941fcd44-86b7-4c89-9cc2-58135186a0f6",
+    "input_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/941fcd44-86b7-4c89-9cc2-58135186a0f6/TypografProcessorModule/output_temp_typograf.html",
+    "output_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/941fcd44-86b7-4c89-9cc2-58135186a0f6/AutocorrectProcessorModule/output_temp_typograf_autocorrected.html",
+    "status": "success",
+    "approved": 0,
+    "rejected": 36
+}

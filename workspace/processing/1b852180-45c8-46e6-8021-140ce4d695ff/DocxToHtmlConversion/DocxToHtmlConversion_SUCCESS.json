@@ -1,0 +1,11 @@
+{
+    "module": "src.pipeline.docx_to_html_converter",
+    "pipeline_stage": "DocxToHtmlConversion",
+    "correlation_id": "1b852180-45c8-46e6-8021-140ce4d695ff",
+    "input_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/textinput/docx",
+    "output_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/1b852180-45c8-46e6-8021-140ce4d695ff/DocxToHtmlConversion/docx_final.html",
+    "status": "success",
+    "timestamp": "2025-06-03T07:35:33.378597+00:00",
+    "error_details": null,
+    "timestamp_end": "2025-06-03T07:35:33.831747+00:00"
+}

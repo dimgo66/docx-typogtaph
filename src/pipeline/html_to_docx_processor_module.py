@@ -12,14 +12,17 @@ class HtmlToDocxProcessorModule:
         self.correlation_id = correlation_id
         self.logger = logging.getLogger(f"HtmlToDocxProcessorModule.{correlation_id}")
 
-    def run(self, html_path: str, output_dir: str) -> Optional[str]:
+    def run(self, html_path: str, output_dir: str, basename: str = None) -> Optional[str]:
         if not os.path.exists(html_path):
             self.logger.error(f"HTML-файл не найден: {html_path}")
             return None
         os.makedirs(output_dir, exist_ok=True)
-        base_name = os.path.splitext(os.path.basename(html_path))[0]
-        output_docx = os.path.join(output_dir, f"{base_name}.docx")
-        cmd = ["pandoc", html_path, "-o", output_docx]
+        if basename is None:
+            base_name = os.path.splitext(os.path.basename(html_path))[0]
+        else:
+            base_name = basename
+        output_docx = os.path.join(output_dir, f"{base_name}_final.docx")
+        cmd = ["pandoc", html_path, "-o", output_docx, "--metadata", "title="]
         self.logger.info(f"Запуск pandoc: {' '.join(cmd)}")
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)

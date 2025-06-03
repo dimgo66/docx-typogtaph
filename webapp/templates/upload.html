@@ -58,7 +58,7 @@
                         <td>{{ data.updated_at }}</td>
                         <td>
                             {% if data.status == 'готов' and data.result %}
-                                {{ data.original_filename if data.original_filename else filename }}
+                                {{ data.original_filename if data.original_filename else filename }} &rarr; {{ data.result }}
                             {% elif data.status == 'ошибка' and data.error %}
                                 <span class="error-message">{{ data.error }}</span>
                             {% else %}
