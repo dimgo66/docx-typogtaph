@@ -28,7 +28,7 @@ import shutil
 import unicodedata
 import string
 
-print("=== PIPELINE VERSION: DIAGNOSTIC DEBUG 2024-06-03 ===")
+logging.warning("=== PIPELINE VERSION: DIAGNOSTIC DEBUG 2024-06-03 ===")
 
 # Определяем имена этапов для новых модулей
 LANGUAGETOOL_STAGE = "LanguageToolProcessorModule"
