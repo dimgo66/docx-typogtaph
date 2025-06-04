@@ -333,4 +333,14 @@
   - [x] Обновить документацию
 - **Зависимости**: src/pipeline/orchestrator.py, Docker-окружение
 
+## Задача: Удалить fallback-логику python-docx из пайплайна
+- **Статус**: Завершена
+- **Описание**: Удалить аварийный этап извлечения текста из DOCX через python-docx (output_full_utf8.txt) и все связанные импорты/вызовы. Оставить только Pandoc для DOCX → HTML.
+- **Шаги выполнения**:
+  - [x] Найти и удалить все импорты и вызовы python-docx
+  - [x] Удалить блок fallback-логики в orchestrator.py
+  - [x] Проверить отсутствие вызовов extract_full_text и output_full_utf8.txt
+  - [x] Обновить changelog, project.md, tasktracker.md
+- **Зависимости**: Нет
+
 ## (Последующие этапы и задачи будут добавлены позже)
