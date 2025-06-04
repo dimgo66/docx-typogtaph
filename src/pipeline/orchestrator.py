@@ -114,7 +114,11 @@ def run_pipeline(input_file_name, basename=None):
                         with open(fallback_txt_path, 'w', encoding='utf-8') as f:
                             for line in lines:
                                 f.write(line + '\n')
-                        main_logger.warning(f"[FALLBACK] Весь текст DOCX сохранён в: {fallback_txt_path}")
+                        if os.path.exists(fallback_txt_path):
+                            size = os.path.getsize(fallback_txt_path)
+                            main_logger.warning(f"[FALLBACK] Весь текст DOCX сохранён в: {fallback_txt_path} (размер: {size} байт)")
+                        else:
+                            main_logger.error(f"[FALLBACK] Файл output_full_utf8.txt не был создан!")
                     except Exception as fallback_e:
                         main_logger.error(f"[FALLBACK] Ошибка при извлечении текста из DOCX: {fallback_e}", exc_info=True)
                     # return False  # Не прерываем пайплайн для диагностики
