@@ -4,10 +4,11 @@ import logging
 import shutil
 import re
 from typing import Optional
+import openai
 
 class AutocorrectProcessorModule:
     """
-    Модуль для автоматического применения исправлений из отчёта LanguageTool к HTML с подтверждением через внутренний ИИ Курсора (автоматический режим).
+    Модуль для автоматического применения исправлений из отчёта LanguageTool к HTML с подтверждением через LLM OpenRouter (Qwen).
     """
     # --- Константы и настройки ---
     AUTOFIX_CANDIDATE_RULE_IDS = {
@@ -17,15 +18,41 @@ class AutocorrectProcessorModule:
     }
     EXCLUDE_WORD_CATEGORIES = {
         "имена_собственные": [r"[А-Я][а-я]+"],
-        "термины_хутор": [r"хут\\.", r"хутор\\s+[А-Я][а-я]+"],
+        "термины_хутор": [r"хут\.", r"хутор\s+[А-Я][а-я]+"],
         "диалектизмы": [r"угорь", r"трошки", r"гутарил"],
         "специфические_слова": [r"сказилось", r"бушковать", r"чиниться"]
     }
     MODEL_NAME = "qwen/qwen3-235b-a22b:free"
+    # OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") # Будет использоваться в confirm_fix_with_openrouter_qwen
+    # YOUR_SITE_URL = os.environ.get("YOUR_SITE_URL", "http://localhost:8000") # Будет использоваться в confirm_fix_with_openrouter_qwen
+    # YOUR_APP_NAME = os.environ.get("YOUR_APP_NAME", "piskulin-processor") # Будет использоваться в confirm_fix_with_openrouter_qwen
+
 
     def __init__(self, correlation_id: str):
         self.correlation_id = correlation_id
-        self.logger = logging.getLogger(f"AutocorrectProcessorModule.{correlation_id}")
+        self.logger = logging.getLogger(f"AutocorrectProcessorModule.{self.correlation_id}")
+        # Инициализация клиента OpenRouter будет здесь или в методе confirm_fix_with_openrouter_qwen
+        self.openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+        self.your_site_url = os.environ.get("YOUR_SITE_URL", "http://localhost:8000")
+        self.your_app_name = os.environ.get("YOUR_APP_NAME", "piskulin-processor")
+
+        if not self.openrouter_api_key:
+            self.logger.warning("OPENROUTER_API_KEY не найдена в переменных окружения. Автокоррекция LLM не будет работать.")
+            # Можно установить фиктивный ключ для локальной разработки без LLM, если это нужно
+            # self.openrouter_api_key = "фиктивный-ключ-для-локальной-разработки" 
+        
+        self.client = None
+        if self.openrouter_api_key:
+            try:
+                self.client = openai.OpenAI(
+                    base_url="https://openrouter.ai/api/v1",
+                    api_key=self.openrouter_api_key,
+                )
+                self.logger.info("Клиент OpenRouter успешно инициализирован.")
+            except Exception as e:
+                self.logger.error(f"Ошибка инициализации клиента OpenRouter: {e}")
+                self.client = None
+
 
     def should_exclude_match(self, error_segment, context):
         for category, patterns in self.EXCLUDE_WORD_CATEGORIES.items():
@@ -57,27 +84,38 @@ class AutocorrectProcessorModule:
         )
         return prompt
 
-    def confirm_fix_with_cursor_ai(self, prompt: str) -> bool:
+    def confirm_fix_with_openrouter_qwen(self, prompt: str) -> bool:
         """
-        Использует внутреннего ассистента Курсора для автоматического подтверждения исправления.
-        Возвращает True, если ассистент считает исправление корректным (ответ начинается с 'ДА').
+        Использует OpenRouter (модель Qwen) для подтверждения исправления.
+        Возвращает True, если LLM считает исправление корректным (ответ начинается с 'ДА').
         """
-        print(f"\n--- PROMPT ДЛЯ CURSOR AI ---\n{prompt}\n--- КОНЕЦ ПРОМПТА ---\n")
-        response = self.cursor_assistant(prompt)
-        print(f"ОТВЕТ CURSOR AI: {response}\n")
-        return response.strip().upper().startswith("ДА")
+        if not self.client:
+            self.logger.warning("Клиент OpenRouter не инициализирован. Пропускаю подтверждение LLM, исправление будет отклонено.")
+            return False
 
-    def cursor_assistant(self, prompt: str) -> str:
-        """
-        Вызов встроенного ИИ Курсора. В Cursor IDE этот метод будет автоматически обработан ассистентом.
-        """
-        # Здесь реализуется вызов внутреннего ИИ Курсора (Cursor AI)
-        # В реальной среде Cursor ассистент сам подставит ответ на промпт.
-        # Для теста можно вернуть 'ДА' или 'НЕТ' вручную, либо реализовать заглушку.
-        # Например:
-        # return "ДА"
-        # Но в рабочем режиме ассистент Курсора сам ответит на этот промпт.
-        return "ДА"  # Здесь ассистент Курсора подставит реальный ответ
+        self.logger.info(f"Отправка запроса к OpenRouter модели {self.MODEL_NAME} для подтверждения исправления.")
+        # print(f"\n--- PROMPT ДЛЯ OPENROUTER QWEN ---\n{prompt}\n--- КОНЕЦ ПРОМПТА ---\n") # Можно раскомментировать для отладки
+
+        try:
+            completion = self.client.chat.completions.create(
+                extra_headers={ # Необходимые заголовки для OpenRouter
+                    "HTTP-Referer": self.your_site_url, 
+                    "X-Title": self.your_app_name,
+                },
+                model=self.MODEL_NAME,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=10, # Ожидаем короткий ответ "ДА" или "НЕТ"
+                temperature=0.1, # Низкая температура для детерминированного ответа
+            )
+            response_text = completion.choices[0].message.content.strip().upper()
+            self.logger.info(f"Ответ от OpenRouter ({self.MODEL_NAME}): {response_text}")
+            # print(f"ОТВЕТ OPENROUTER QWEN: {response_text}\n") # Можно раскомментировать для отладки
+            return response_text.startswith("ДА")
+        except Exception as e:
+            self.logger.error(f"Ошибка при обращении к OpenRouter API: {e}")
+            return False # В случае ошибки считаем, что исправление не подтверждено
 
     def run(self, html_path: str, json_report_path: str, output_dir: str) -> Optional[str]:
         if not os.path.exists(html_path) or not os.path.exists(json_report_path):
@@ -107,13 +145,13 @@ class AutocorrectProcessorModule:
                     rejected_corrections.append({'offset': global_offset, 'length': length, 'replacement': replacement, 'original': original, 'reason': f"Автоматически отклонено (категория: {exclude_category})"})
                     continue
                 if ' ' in replacement and ' ' not in original:
-                    rejected_corrections.append({'offset': global_offset, 'length': length, 'replacement': replacement, 'original': original, 'reason': "Автоматически отклонено (разделение одного слова на два)"})
+                    rejected_corrections.append({'offset': global_offset, 'length': length, 'replacement': replacement, 'original': original, 'reason': "Автоматически отклонено (замена одного слова на несколько)"})
                     continue
                 llm_prompt = self.generate_llm_prompt(match, html_content)
-                if self.confirm_fix_with_cursor_ai(llm_prompt):
+                if self.confirm_fix_with_openrouter_qwen(llm_prompt):
                     approved_corrections.append({'offset': global_offset, 'length': length, 'replacement': replacement, 'original': original})
                 else:
-                    rejected_corrections.append({'offset': global_offset, 'length': length, 'replacement': replacement, 'original': original, 'reason': "Отклонено Cursor AI"})
+                    rejected_corrections.append({'offset': global_offset, 'length': length, 'replacement': replacement, 'original': original, 'reason': f"Отклонено LLM ({self.MODEL_NAME}) или ошибка LLM API"})
         content = html_content
         for fix in approved_corrections:
             offset = fix['offset']
