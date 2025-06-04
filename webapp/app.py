@@ -100,17 +100,29 @@ def process_file_worker():
                     'python3', '-m', 'src.pipeline.orchestrator', original_filename, '--basename', basename
                 ], check=True, capture_output=True, text=True, cwd=PROJECT_ROOT)
                 logging.info(f"Пайплайн завершён для: {original_filename_user}")
+                if result.stdout:
+                    logging.info(f"Pipeline STDOUT for {original_filename_user}:\n{result.stdout.strip()}")
+                if result.stderr:
+                    logging.warning(f"Pipeline STDERR for {original_filename_user}:\n{result.stderr.strip()}")
             except subprocess.CalledProcessError as e:
-                error_output = e.stderr or e.stdout or "Неизвестная ошибка при обработке."
-                # Не считаем LANGTOOL_DEBUG ошибкой
-                if '===LANGTOOL_DEBUG===' in error_output:
-                    logging.info(f"[LANGTOOL_DEBUG] {error_output.strip()}")
-                    # Продолжаем обработку, не выставляем статус 'ошибка'
+                error_message_parts = []
+                if e.stdout:
+                    logging.error(f"Pipeline STDOUT on error for {original_filename_user}:\n{e.stdout.strip()}")
+                    error_message_parts.append(f"STDOUT: {e.stdout.strip()}")
+                if e.stderr:
+                    logging.error(f"Pipeline STDERR on error for {original_filename_user}:\n{e.stderr.strip()}")
+                    error_message_parts.append(f"STDERR: {e.stderr.strip()}")
+                
+                error_output_full = "\n".join(error_message_parts) if error_message_parts else "Неизвестная ошибка при обработке (нет stdout/stderr)."
+                
+                if '===LANGTOOL_DEBUG===' in e.stdout or '===LANGTOOL_DEBUG===' in e.stderr:
+                    logging.info(f"[LANGTOOL_DEBUG] Обнаружен LANGTOOL_DEBUG в выводе с ошибкой. Полный вывод:\n{error_output_full}")
+                    update_file_status(original_filename, "ошибка", error_message=f"Пайплайн завершился с ошибкой (код {e.returncode}), но содержит LANGTOOL_DEBUG. Детали в логах.")
                 else:
-                    logging.error(f"Ошибка пайплайна: {error_output.strip()}")
-                    update_file_status(original_filename, "ошибка", error_message=error_output.strip())
-                    processing_queue.task_done()
-                    continue
+                    logging.error(f"Ошибка пайплайна (код {e.returncode}): {error_output_full}")
+                    update_file_status(original_filename, "ошибка", error_message=error_output_full)
+                processing_queue.task_done()
+                continue
             except Exception as e:
                 logging.error(f"Исключение при запуске пайплайна: {e}")
                 update_file_status(original_filename, "ошибка", error_message=str(e))
