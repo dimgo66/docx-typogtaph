@@ -76,9 +76,20 @@ class LanguageToolProcessorModule:
             "--json",
             tmp_txt_path
         ]
+        self.logger.info(f"[LT_DEBUG] Готовимся к запуску LanguageTool. Команда: {' '.join(command)}")
+        print(f"[LT_DEBUG] Готовимся к запуску LanguageTool. Команда: {' '.join(command)}", file=sys.stderr)
+
         try:
+            self.logger.info("[LT_DEBUG] Перед subprocess.Popen()")
+            print("[LT_DEBUG] Перед subprocess.Popen()", file=sys.stderr)
             proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = proc.communicate()
+            self.logger.info("[LT_DEBUG] После subprocess.Popen(), перед proc.communicate()")
+            print("[LT_DEBUG] После subprocess.Popen(), перед proc.communicate()", file=sys.stderr)
+            
+            stdout, stderr = proc.communicate() # Может быть длительным и потреблять память
+            
+            self.logger.info("[LT_DEBUG] После proc.communicate()")
+            print("[LT_DEBUG] После proc.communicate()", file=sys.stderr)
 
             stdout_decoded = stdout.decode('utf-8', errors='ignore').strip() if stdout else ''
             stderr_decoded = stderr.decode('utf-8', errors='ignore').strip() if stderr else ''
