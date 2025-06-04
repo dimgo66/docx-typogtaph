@@ -68,7 +68,7 @@ class LanguageToolProcessorModule:
         # --- Запускаем LanguageTool на plain text ---
         command = [
             "java",
-            "-Xmx2G",
+            "-Xmx1G",
             "-jar",
             "LanguageTool-6.6/languagetool-commandline.jar",
             "-l", "ru",
