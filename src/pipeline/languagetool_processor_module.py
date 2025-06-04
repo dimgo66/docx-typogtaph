@@ -77,24 +77,61 @@ class LanguageToolProcessorModule:
             tmp_txt_path
         ]
         try:
-            with open(output_report_path, "w", encoding="utf-8") as fout:
-                proc = subprocess.Popen(command, stdout=fout, stderr=subprocess.PIPE)
-                _, stderr = proc.communicate()
-                stderr_decoded = stderr.decode('utf-8', errors='ignore') if stderr else ''
-                # Фильтруем нефатальные сообщения
-                non_critical_msgs = [
-                    'Expected text language: Russian',
-                    'Working on',
-                ]
-                def is_non_critical(line):
-                    return any(msg in line for msg in non_critical_msgs)
-                stderr_lines = [line.strip() for line in stderr_decoded.splitlines() if line.strip()]
-                critical_lines = [line for line in stderr_lines if not is_non_critical(line)]
-                if proc.returncode != 0 or critical_lines:
-                    self.logger.error(f"LanguageTool завершился с ошибкой: {stderr_decoded}")
-                    return None
-                elif stderr_lines:
-                    self.logger.info(f"[INFO] LanguageTool stderr (нефатальные сообщения): {stderr_decoded}")
+            proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = proc.communicate()
+
+            stdout_decoded = stdout.decode('utf-8', errors='ignore').strip() if stdout else ''
+            stderr_decoded = stderr.decode('utf-8', errors='ignore').strip() if stderr else ''
+
+            self.logger.info(f"LanguageTool process return code: {proc.returncode}")
+
+            if stdout_decoded:
+                self.logger.info(f"LanguageTool process stdout (first 500 chars):\\n{stdout_decoded[:500]}")
+            else:
+                self.logger.info("LanguageTool process stdout was empty.")
+
+            if stderr_decoded:
+                self.logger.info(f"LanguageTool process full stderr:\\n{stderr_decoded}")
+            else:
+                self.logger.info("LanguageTool process stderr was empty.")
+
+            if proc.returncode == 0:
+                if stdout_decoded.startswith("{"):
+                    try:
+                        json_output = json.loads(stdout_decoded)
+                        with open(output_report_path, "w", encoding="utf-8") as fout:
+                            json.dump(json_output, fout, ensure_ascii=False, indent=2)
+                        self.logger.info(f"LanguageTool JSON output successfully parsed from stdout and written to {output_report_path}")
+                        
+                        # Проверим stderr на наличие только некритичных сообщений, если они есть
+                        non_critical_msgs = [
+                            'Expected text language: Russian',
+                            'Working on', 
+                            'Picked up _JAVA_OPTIONS:'
+                        ]
+                        def is_critical_stderr(line_content):
+                            return not any(msg in line_content for msg in non_critical_msgs)
+
+                        if stderr_decoded:
+                            stderr_lines_for_check = [line.strip() for line in stderr_decoded.splitlines() if line.strip()]
+                            critical_stderr_detected = any(is_critical_stderr(line) for line in stderr_lines_for_check)
+                            if critical_stderr_detected:
+                                self.logger.warning(f"LanguageTool exited with 0, but had unexpected messages in stderr: {stderr_decoded}")
+                                # Решение о том, считать ли это ошибкой пайплайна, может быть здесь. Пока просто логируем.
+                            elif stderr_lines_for_check: # Есть только некритичные
+                                self.logger.info(f"LanguageTool non-critical stderr messages: {stderr_decoded}")
+                                
+                    except json.JSONDecodeError as je:
+                        self.logger.error(f"LanguageTool output (stdout) was not valid JSON despite return code 0. JSONDecodeError: {je}. Stdout (first 500): {stdout_decoded[:500]}...")
+                        return None # Ошибка, если код 0, но stdout не JSON
+                else:
+                    # Если код 0, но stdout пустой или не JSON - это проблема
+                    self.logger.error(f"LanguageTool exited with 0, but stdout was empty or not JSON. Stdout (first 500): {stdout_decoded[:500]}. Stderr: {stderr_decoded}")
+                    return None 
+            else: # proc.returncode != 0
+                self.logger.error(f"LanguageTool exited with non-zero code {proc.returncode}. Full stderr: {stderr_decoded}. Full stdout (first 500): {stdout_decoded[:500]}")
+                return None
+
         except Exception as e:
             self.logger.error(f"Ошибка при запуске LanguageTool: {e}")
             return None
