@@ -1,9 +1,0 @@
-{
-    "module": "src.pipeline.autocorrect_processor_module",
-    "correlation_id": "bfef5248-671a-41a8-aa6d-fba2e2445c4b",
-    "input_file": "workspace/processing/bfef5248-671a-41a8-aa6d-fba2e2445c4b/stage1_typograf.html",
-    "output_file": "workspace/processing/bfef5248-671a-41a8-aa6d-fba2e2445c4b/stage1_typograf_autocorrected.html",
-    "status": "success",
-    "approved": 0,
-    "rejected": 36
-}

@@ -1,9 +1,0 @@
-{
-    "module": "src.pipeline.autocorrect_processor_module",
-    "correlation_id": "c2f87c7f-2660-44aa-a7ba-6b3c66d87536",
-    "input_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/c2f87c7f-2660-44aa-a7ba-6b3c66d87536/TypografProcessorModule/Былое и думы Борис Минаев Поколение Юры_final_typograf.html",
-    "output_file": "/Volumes/Store1/Yandex.Disk.localized/www-yandex/piskulin/workspace/processing/c2f87c7f-2660-44aa-a7ba-6b3c66d87536/AutocorrectProcessorModule/Былое и думы Борис Минаев Поколение Юры_final_typograf_autocorrected.html",
-    "status": "success",
-    "approved": 0,
-    "rejected": 4
-}
