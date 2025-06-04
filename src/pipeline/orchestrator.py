@@ -99,29 +99,31 @@ def run_pipeline(input_file_name, basename=None):
             if not output_from_stage1 or not os.path.exists(output_from_stage1):
                 main_logger.error(f"Этап {stage1_module_name} завершился ошибкой. Выходной файл не создан или не найден: {output_from_stage1}")
                 # Fallback: извлекаем текст из DOCX и сохраняем в output_full_utf8.txt
-                try:
-                    from docx import Document
-                    doc = Document(current_input_path)
-                    lines = []
-                    for para in doc.paragraphs:
-                        text = para.text.strip()
-                        if text:
-                            lines.append(text)
-                    fallback_txt_path = os.path.join(stage1_processing_dir, "output_full_utf8.txt")
-                    with open(fallback_txt_path, 'w', encoding='utf-8') as f:
-                        for line in lines:
-                            f.write(line + '\n')
-                    main_logger.warning(f"[FALLBACK] Весь текст DOCX сохранён в: {fallback_txt_path}")
-                except Exception as fallback_e:
-                    main_logger.error(f"[FALLBACK] Ошибка при извлечении текста из DOCX: {fallback_e}", exc_info=True)
-                # return False  # Не прерываем пайплайн для диагностики
-            main_logger.info(f"Этап {stage1_module_name} успешно завершен. Результат: {output_from_stage1}")
-            # После этапа записываем новый путь в meta-файл
-            with open(meta_path, "w") as f:
-                f.write(output_from_stage1)
-            # Логируем содержимое meta-файла и список файлов в директории
-            main_logger.info(f"[DEBUG] После этапа {stage1_module_name}: output_from_stage1={output_from_stage1}")
-            main_logger.info(f"[DEBUG] Содержимое директории {stage1_processing_dir}: {os.listdir(stage1_processing_dir)}")
+                main_logger.info(f"[DEBUG] Проверка после DocxToHtmlConverter: output_from_stage1={output_from_stage1}, exists={os.path.exists(output_from_stage1) if output_from_stage1 else 'None'}")
+                if not output_from_stage1 or not os.path.exists(output_from_stage1):
+                    main_logger.warning("[DEBUG] Вход в fallback-ветку извлечения текста из DOCX")
+                    try:
+                        from docx import Document
+                        doc = Document(current_input_path)
+                        lines = []
+                        for para in doc.paragraphs:
+                            text = para.text.strip()
+                            if text:
+                                lines.append(text)
+                        fallback_txt_path = os.path.join(stage1_processing_dir, "output_full_utf8.txt")
+                        with open(fallback_txt_path, 'w', encoding='utf-8') as f:
+                            for line in lines:
+                                f.write(line + '\n')
+                        main_logger.warning(f"[FALLBACK] Весь текст DOCX сохранён в: {fallback_txt_path}")
+                    except Exception as fallback_e:
+                        main_logger.error(f"[FALLBACK] Ошибка при извлечении текста из DOCX: {fallback_e}", exc_info=True)
+                    # return False  # Не прерываем пайплайн для диагностики
+                # После этапа записываем новый путь в meta-файл
+                with open(meta_path, "w") as f:
+                    f.write(output_from_stage1)
+                # Логируем содержимое meta-файла и список файлов в директории
+                main_logger.info(f"[DEBUG] После этапа {stage1_module_name}: output_from_stage1={output_from_stage1}")
+                main_logger.info(f"[DEBUG] Содержимое директории {stage1_processing_dir}: {os.listdir(stage1_processing_dir)}")
         except TextProcessingError as e:
             main_logger.error(f"Ошибка на этапе {stage1_module_name}: {str(e)}", exc_info=True, extra=getattr(e, 'details', {}))
             main_logger.error(f"Остановка конвейера после ошибки на этапе: {stage1_module_name}")
