@@ -97,51 +97,54 @@ class LanguageToolProcessorModule:
             self.logger.info(f"LanguageTool process return code: {proc.returncode}")
 
             if stdout_decoded:
-                self.logger.info(f"LanguageTool process stdout (first 500 chars):\\n{stdout_decoded[:500]}")
+                self.logger.info(f"LanguageTool process stdout (first 500 chars):\n{stdout_decoded[:500]}")
             else:
                 self.logger.info("LanguageTool process stdout was empty.")
 
             if stderr_decoded:
-                self.logger.info(f"LanguageTool process full stderr:\\n{stderr_decoded}")
+                self.logger.info(f"LanguageTool process full stderr:\n{stderr_decoded}")
             else:
                 self.logger.info("LanguageTool process stderr was empty.")
 
-            if proc.returncode == 0:
-                if stdout_decoded.startswith("{"):
-                    try:
-                        json_output = json.loads(stdout_decoded)
-                        with open(output_report_path, "w", encoding="utf-8") as fout:
-                            json.dump(json_output, fout, ensure_ascii=False, indent=2)
-                        self.logger.info(f"LanguageTool JSON output successfully parsed from stdout and written to {output_report_path}")
-                        
-                        # Проверим stderr на наличие только некритичных сообщений, если они есть
-                        non_critical_msgs = [
-                            'Expected text language: Russian',
-                            'Working on', 
-                            'Picked up _JAVA_OPTIONS:'
-                        ]
-                        def is_critical_stderr(line_content):
-                            return not any(msg in line_content for msg in non_critical_msgs)
-
-                        if stderr_decoded:
-                            stderr_lines_for_check = [line.strip() for line in stderr_decoded.splitlines() if line.strip()]
-                            critical_stderr_detected = any(is_critical_stderr(line) for line in stderr_lines_for_check)
-                            if critical_stderr_detected:
-                                self.logger.warning(f"LanguageTool exited with 0, but had unexpected messages in stderr: {stderr_decoded}")
-                                # Решение о том, считать ли это ошибкой пайплайна, может быть здесь. Пока просто логируем.
-                            elif stderr_lines_for_check: # Есть только некритичные
-                                self.logger.info(f"LanguageTool non-critical stderr messages: {stderr_decoded}")
-                                
-                    except json.JSONDecodeError as je:
-                        self.logger.error(f"LanguageTool output (stdout) was not valid JSON despite return code 0. JSONDecodeError: {je}. Stdout (first 500): {stdout_decoded[:500]}...")
-                        return None # Ошибка, если код 0, но stdout не JSON
-                else:
-                    # Если код 0, но stdout пустой или не JSON - это проблема
-                    self.logger.error(f"LanguageTool exited with 0, but stdout was empty or not JSON. Stdout (first 500): {stdout_decoded[:500]}. Stderr: {stderr_decoded}")
-                    return None 
-            else: # proc.returncode != 0
+            # --- Более строгая проверка результата LanguageTool ---
+            if proc.returncode != 0:
                 self.logger.error(f"LanguageTool exited with non-zero code {proc.returncode}. Full stderr: {stderr_decoded}. Full stdout (first 500): {stdout_decoded[:500]}")
                 return None
+
+            if not stdout_decoded:
+                self.logger.error(f"LanguageTool exited with 0, but stdout was empty. Stderr: {stderr_decoded}")
+                return None
+
+            try:
+                json_output = json.loads(stdout_decoded)
+            except json.JSONDecodeError as je:
+                self.logger.error(f"LanguageTool output (stdout) was not valid JSON despite return code 0. JSONDecodeError: {je}. Stdout (first 500): {stdout_decoded[:500]}...")
+                return None
+            
+            # Если дошли сюда, значит returncode == 0, stdout не пуст и является валидным JSON
+            with open(output_report_path, "w", encoding="utf-8") as fout:
+                json.dump(json_output, fout, ensure_ascii=False, indent=2)
+            self.logger.info(f"LanguageTool JSON output successfully parsed and written to {output_report_path}")
+            
+            # Проверка stderr на наличие только некритичных сообщений (если они есть и returncode == 0)
+            non_critical_msgs = [
+                'Expected text language: Russian',
+                'Working on', 
+                'Picked up _JAVA_OPTIONS:'
+            ]
+            def is_critical_stderr(line_content):
+                return not any(msg in line_content for msg in non_critical_msgs)
+
+            if stderr_decoded:
+                stderr_lines_for_check = [line.strip() for line in stderr_decoded.splitlines() if line.strip()]
+                critical_stderr_detected = any(is_critical_stderr(line) for line in stderr_lines_for_check)
+                if critical_stderr_detected:
+                    self.logger.warning(f"LanguageTool exited with 0 and valid JSON, but had unexpected messages in stderr: {stderr_decoded}")
+                    # Решение о том, считать ли это ошибкой пайплайна, может быть здесь. 
+                    # Пока что, если JSON есть, считаем успехом для этого модуля, но логируем предупреждение.
+                elif stderr_lines_for_check: # Есть только некритичные
+                    self.logger.info(f"LanguageTool non-critical stderr messages: {stderr_decoded}")
+            # --- Конец строгой проверки ---
 
         except Exception as e:
             self.logger.error(f"Ошибка при запуске LanguageTool: {e}")
@@ -154,5 +157,5 @@ class LanguageToolProcessorModule:
         # Сохраняем служебный SUCCESS.json
         success_path = os.path.join(output_dir, "LanguageToolProcessorModule_SUCCESS.json")
         with open(success_path, "w", encoding="utf-8") as f:
-            json.dump({"output_report_path": output_report_path}, f, ensure_ascii=False, indent=2)
+            json.dump({"output_report_path": output_report_path, "status": "success"}, f, ensure_ascii=False, indent=2)
         return output_report_path 
